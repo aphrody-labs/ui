@@ -1,7 +1,7 @@
 import * as fs from "fs/promises"
 import { tmpdir } from "os"
 import * as path from "path"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import {
   RegistryErrorCode,

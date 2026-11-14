@@ -1,6 +1,3 @@
-import { execa } from "execa"
-import { http, HttpResponse } from "msw"
-import { setupServer } from "msw/node"
 import {
   afterAll,
   afterEach,
@@ -10,8 +7,11 @@ import {
   expect,
   it,
   vi,
-} from "vitest"
+} from "bun:test"
+import { http, HttpResponse } from "msw"
+import { setupServer } from "msw/node"
 
+import { exec } from "../exec"
 import { withRegistryContext } from "./context"
 import {
   encodeGitHubPath,
@@ -23,8 +23,8 @@ import {
   resolveGitHubRefViaAuth,
 } from "./github-cli"
 
-vi.mock("execa", () => ({
-  execa: vi.fn(),
+vi.mock("../exec", () => ({
+  exec: vi.fn(),
 }))
 
 const server = setupServer()
@@ -41,7 +41,7 @@ describe("github-cli", () => {
   beforeEach(() => {
     vi.stubEnv("GH_TOKEN", "")
     vi.stubEnv("GITHUB_TOKEN", "")
-    vi.mocked(execa).mockReset()
+    vi.mocked(exec).mockReset()
   })
 
   afterEach(() => {
@@ -107,13 +107,13 @@ describe("github-cli", () => {
 
   describe("fetchGitHubFileViaGh", () => {
     it("invokes gh with pinned hostname, fixed headers, and a hermetic env", async () => {
-      vi.mocked(execa).mockResolvedValueOnce({ stdout: "file content" } as any)
+      vi.mocked(exec).mockResolvedValueOnce({ stdout: "file content" } as any)
 
       await expect(
         fetchGitHubFileViaGh(ADDRESS, SHA, "components/ui/button.tsx")
       ).resolves.toBe("file content")
 
-      expect(vi.mocked(execa)).toHaveBeenCalledWith(
+      expect(vi.mocked(exec)).toHaveBeenCalledWith(
         "gh",
         [
           "api",
@@ -132,7 +132,7 @@ describe("github-cli", () => {
         })
       )
 
-      const env = (vi.mocked(execa).mock.calls[0] as any[])[2]
+      const env = (vi.mocked(exec).mock.calls[0] as any[])[2]
         .env as NodeJS.ProcessEnv
       expect(env.GH_HOST).toBe("github.com")
       expect(env.GH_PROMPT_DISABLED).toBe("1")
@@ -152,11 +152,11 @@ describe("github-cli", () => {
       vi.stubEnv("GH_HOST", "github.enterprise.example")
       vi.stubEnv("GH_TOKEN", "inherited-token")
       vi.stubEnv("GH_DEBUG", "api")
-      vi.mocked(execa).mockResolvedValueOnce({ stdout: "ok" } as any)
+      vi.mocked(exec).mockResolvedValueOnce({ stdout: "ok" } as any)
 
       await fetchGitHubFileViaGh(ADDRESS, SHA, "button.tsx")
 
-      const env = (vi.mocked(execa).mock.calls[0] as any[])[2]
+      const env = (vi.mocked(exec).mock.calls[0] as any[])[2]
         .env as NodeJS.ProcessEnv
       expect(env.GH_HOST).toBe("github.com")
       expect(env).not.toHaveProperty("GH_TOKEN")
@@ -164,17 +164,17 @@ describe("github-cli", () => {
     })
 
     it("encodes path segments without encoding separators", async () => {
-      vi.mocked(execa).mockResolvedValueOnce({ stdout: "ok" } as any)
+      vi.mocked(exec).mockResolvedValueOnce({ stdout: "ok" } as any)
 
       await fetchGitHubFileViaGh(ADDRESS, SHA, "dir with space/a?b.tsx")
 
-      expect(vi.mocked(execa).mock.calls[0]![1]).toContain(
+      expect(vi.mocked(exec).mock.calls[0]![1]).toContain(
         `repos/acme/ui/contents/dir%20with%20space/a%3Fb.tsx?ref=${SHA}`
       )
     })
 
     it("classifies a missing gh binary", async () => {
-      vi.mocked(execa).mockRejectedValueOnce(
+      vi.mocked(exec).mockRejectedValueOnce(
         Object.assign(new Error("spawn gh ENOENT"), { code: "ENOENT" })
       )
 
@@ -184,7 +184,7 @@ describe("github-cli", () => {
     })
 
     it("classifies a timeout", async () => {
-      vi.mocked(execa).mockRejectedValueOnce(
+      vi.mocked(exec).mockRejectedValueOnce(
         Object.assign(new Error("timed out"), { timedOut: true })
       )
 
@@ -194,7 +194,7 @@ describe("github-cli", () => {
     })
 
     it("classifies an unauthenticated gh", async () => {
-      vi.mocked(execa).mockRejectedValueOnce(
+      vi.mocked(exec).mockRejectedValueOnce(
         Object.assign(new Error("exit 4"), {
           stderr: "To get started with GitHub CLI, please run:  gh auth login",
         })
@@ -206,7 +206,7 @@ describe("github-cli", () => {
     })
 
     it("parses a validated HTTP status from gh stderr", async () => {
-      vi.mocked(execa).mockRejectedValueOnce(
+      vi.mocked(exec).mockRejectedValueOnce(
         Object.assign(new Error("exit 1"), {
           stderr: "gh: Not Found (HTTP 404)",
         })
@@ -218,7 +218,7 @@ describe("github-cli", () => {
     })
 
     it("treats unknown stderr as a generic network failure", async () => {
-      vi.mocked(execa).mockRejectedValueOnce(
+      vi.mocked(exec).mockRejectedValueOnce(
         Object.assign(new Error("exit 1"), { stderr: "something odd" })
       )
 
@@ -229,7 +229,7 @@ describe("github-cli", () => {
 
     it("never leaks subprocess output into the sanitized failure", async () => {
       const secret = "ghp_secret_value_1234567890"
-      vi.mocked(execa).mockRejectedValueOnce(
+      vi.mocked(exec).mockRejectedValueOnce(
         Object.assign(
           new Error(`Command failed: gh api ...\n${secret}\nprivate source`),
           {
@@ -259,7 +259,7 @@ describe("github-cli", () => {
     it("bounds concurrent gh processes to eight", async () => {
       let active = 0
       let maxActive = 0
-      vi.mocked(execa).mockImplementation((() => {
+      vi.mocked(exec).mockImplementation((() => {
         active += 1
         maxActive = Math.max(maxActive, active)
         return new Promise((resolve) =>
@@ -508,7 +508,7 @@ describe("github-cli", () => {
 
   describe("resolveGitHubRefViaAuth (gh mode)", () => {
     it("resolves through gh api and validates the SHA", async () => {
-      vi.mocked(execa).mockResolvedValueOnce({
+      vi.mocked(exec).mockResolvedValueOnce({
         stdout: JSON.stringify({ sha: SHA }),
       } as any)
 
@@ -516,14 +516,14 @@ describe("github-cli", () => {
         resolveGitHubRefViaAuth(ADDRESS, "refs/heads/main", "gh")
       ).resolves.toBe(SHA)
 
-      expect(vi.mocked(execa).mock.calls[0]![1]).toContain(
+      expect(vi.mocked(exec).mock.calls[0]![1]).toContain(
         "repos/acme/ui/commits/heads/main"
       )
-      expect(vi.mocked(execa).mock.calls[0]![1]).toContain("--hostname")
+      expect(vi.mocked(exec).mock.calls[0]![1]).toContain("--hostname")
     })
 
     it("rejects unparseable gh output", async () => {
-      vi.mocked(execa).mockResolvedValueOnce({
+      vi.mocked(exec).mockResolvedValueOnce({
         stdout: "not json",
       } as any)
 

@@ -1,6 +1,6 @@
 import { REGISTRY_URL } from "@shadcn/registry/internal/registry/constants"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 import prompts from "prompts"
-import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   DEFAULT_PRESETS,

@@ -3,7 +3,9 @@
   "compilerOptions": {
     "module": "ESNext",
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022"
+    ],
     "moduleResolution": "bundler",
     "noEmit": true,
     "strict": true,
@@ -12,8 +14,19 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "types": ["vitest/globals", "node"]
+    "types": [
+      "bun",
+      "node"
+    ]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "temp", "fixtures"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "temp",
+    "fixtures",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

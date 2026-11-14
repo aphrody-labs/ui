@@ -1,6 +1,6 @@
 import { type Config } from "@/src/get-config"
 import { transformAsChild } from "@/src/transformers/transform-aschild"
-import { describe, expect, test } from "vitest"
+import { describe, expect, test } from "bun:test"
 
 import { transform } from "."
 

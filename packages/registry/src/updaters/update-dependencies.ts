@@ -6,9 +6,10 @@ import { logger } from "@/src/logger"
 import { SHADCN_URL } from "@/src/registry/constants"
 import { RegistryItem } from "@/src/registry/schema"
 import { spinner } from "@/src/spinner"
-import { execa } from "execa"
 import fsExtra from "fs-extra"
 import prompts from "prompts"
+
+import { exec } from "../exec"
 
 // npm runs an audit and a funding check after every install and uninstall.
 // We never show npm's output, and the audit can take most of the install
@@ -127,7 +128,7 @@ export async function removeDependencies(cwd: string, dependencies: string[]) {
 
   const packageManager = await getPackageManager(cwd)
   if (packageManager === "npm") {
-    await execa("npm", ["uninstall", ...NPM_FLAGS, "--", ...dependencies], {
+    await exec("npm", ["uninstall", ...NPM_FLAGS, "--", ...dependencies], {
       cwd,
     })
     return
@@ -150,7 +151,7 @@ export async function removeDependencies(cwd: string, dependencies: string[]) {
     return
   }
 
-  await execa(packageManager, ["remove", "--", ...dependencies], { cwd })
+  await exec(packageManager, ["remove", "--", ...dependencies], { cwd })
 }
 
 /**
@@ -241,9 +242,9 @@ function hasDeclaredDependency(
 ) {
   return Boolean(
     packageInfo?.dependencies?.[dependency] ??
-      packageInfo?.devDependencies?.[dependency] ??
-      packageInfo?.optionalDependencies?.[dependency] ??
-      packageInfo?.peerDependencies?.[dependency]
+    packageInfo?.devDependencies?.[dependency] ??
+    packageInfo?.optionalDependencies?.[dependency] ??
+    packageInfo?.peerDependencies?.[dependency]
   )
 }
 
@@ -281,7 +282,7 @@ async function getUpdateDependenciesPackageManager(config: Config) {
  * manager's argument list. A specifier beginning with "-" would be interpreted
  * as a flag rather than a package name, letting a malicious registry alter the
  * install source/behavior (argument injection). Reject those before they reach
- * `execa`; the `--` end-of-options separator added at each call site is the
+ * `exec`; the `--` end-of-options separator added at each call site is the
  * second layer of defense.
  */
 export function assertSafeDependencies(deps: string[]) {
@@ -319,13 +320,13 @@ async function installWithPackageManager(
   assertSafeDependencies(devDependencies)
 
   if (dependencies.length) {
-    await execa(packageManager, ["add", "--", ...dependencies], {
+    await exec(packageManager, ["add", "--", ...dependencies], {
       cwd,
     })
   }
 
   if (devDependencies.length) {
-    await execa(packageManager, ["add", "-D", "--", ...devDependencies], {
+    await exec(packageManager, ["add", "-D", "--", ...devDependencies], {
       cwd,
     })
   }
@@ -341,7 +342,7 @@ async function installWithNpm(
   assertSafeDependencies(devDependencies)
 
   if (dependencies.length) {
-    await execa(
+    await exec(
       "npm",
       [
         "install",
@@ -355,7 +356,7 @@ async function installWithNpm(
   }
 
   if (devDependencies.length) {
-    await execa(
+    await exec(
       "npm",
       [
         "install",
@@ -376,13 +377,13 @@ async function installWithDeno(
   cwd: string
 ) {
   if (dependencies.length) {
-    await execa("deno", ["add", ...dependencies.map((dep) => `npm:${dep}`)], {
+    await exec("deno", ["add", ...dependencies.map((dep) => `npm:${dep}`)], {
       cwd,
     })
   }
 
   if (devDependencies.length) {
-    await execa(
+    await exec(
       "deno",
       ["add", "-D", ...devDependencies.map((dep) => `npm:${dep}`)],
       { cwd }
@@ -399,11 +400,11 @@ async function installWithExpo(
   assertSafeDependencies(devDependencies)
 
   if (dependencies.length) {
-    await execa("npx", ["expo", "install", "--", ...dependencies], { cwd })
+    await exec("npx", ["expo", "install", "--", ...dependencies], { cwd })
   }
 
   if (devDependencies.length) {
-    await execa("npx", ["expo", "install", "-- -D", "--", ...devDependencies], {
+    await exec("npx", ["expo", "install", "-- -D", "--", ...devDependencies], {
       cwd,
     })
   }

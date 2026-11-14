@@ -10,13 +10,13 @@ import {
 } from "@/src/icons/templates"
 import { getRegistryIcons } from "@/src/utils/registry-api"
 import { Config } from "@shadcn/registry/internal/get-config"
+import { glob, globSync } from "@shadcn/registry/internal/glob"
 import { highlighter } from "@shadcn/registry/internal/highlighter"
 import { iconLibraries } from "@shadcn/registry/internal/icons/libraries"
 import { logger } from "@shadcn/registry/internal/logger"
 import { spinner } from "@shadcn/registry/internal/spinner"
 import { updateDependencies } from "@shadcn/registry/internal/updaters/update-dependencies"
 import { iconsSchema } from "@shadcn/registry/schema"
-import fg from "fast-glob"
 import fsExtra from "fs-extra"
 import prompts from "prompts"
 import {
@@ -72,7 +72,7 @@ export async function migrateIcons(
     const isGlob = options.path.includes("*")
 
     if (isGlob) {
-      files = await fg(options.path, {
+      files = await glob(options.path, {
         cwd: basePath,
         onlyFiles: true,
         ignore: ["**/node_modules/**"],
@@ -87,7 +87,7 @@ export async function migrateIcons(
 
       if (stat.isDirectory()) {
         basePath = fullPath
-        files = await fg("**/*.{js,ts,jsx,tsx}", {
+        files = await glob("**/*.{js,ts,jsx,tsx}", {
           cwd: basePath,
           onlyFiles: true,
           ignore: ["**/node_modules/**"],
@@ -110,7 +110,7 @@ export async function migrateIcons(
     }
 
     basePath = config.resolvedPaths.ui
-    files = await fg("**/*.{js,ts,jsx,tsx}", {
+    files = await glob("**/*.{js,ts,jsx,tsx}", {
       cwd: basePath,
     })
   }

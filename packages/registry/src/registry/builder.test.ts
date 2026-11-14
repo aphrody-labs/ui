@@ -2,7 +2,7 @@
 
 import { REGISTRY_URL } from "@/src/registry/constants"
 import { RegistryNotConfiguredError } from "@/src/registry/errors"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "bun:test"
 
 import {
   buildHeadersFromRegistryConfig,

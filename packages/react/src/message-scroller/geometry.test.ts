@@ -1,6 +1,4 @@
-// @vitest-environment jsdom
-
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "bun:test"
 
 import {
   getContentBottom,

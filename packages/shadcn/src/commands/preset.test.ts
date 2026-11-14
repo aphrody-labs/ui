@@ -9,8 +9,8 @@ import {
 } from "@shadcn/registry/internal/get-monorepo-info"
 import { getProjectInfo } from "@shadcn/registry/internal/get-project-info"
 import { logger } from "@shadcn/registry/internal/logger"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 import open from "open"
-import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   decodePresetCode,

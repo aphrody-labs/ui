@@ -4,7 +4,7 @@ import {
   readUIMessageStream,
 } from "ai"
 import type { ChatTransport, UIMessage } from "ai"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { createChat } from "./index"
 import { readStream, weatherLoading, weatherOutput } from "./test-utils"

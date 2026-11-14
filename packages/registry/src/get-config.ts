@@ -10,9 +10,10 @@ import {
   workspaceConfigSchema,
 } from "@/src/registry/schema"
 import { resolveImportWithMetadata } from "@/src/resolve-import"
-import fg from "fast-glob"
 import { loadConfig, type ConfigLoaderSuccessResult } from "tsconfig-paths"
 import { z } from "zod"
+
+import { glob, globSync } from "./glob"
 
 export const DEFAULT_STYLE = "default"
 export const DEFAULT_COMPONENTS = "@/components"
@@ -270,7 +271,7 @@ export async function findPackageRoot(cwd: string, resolvedPath: string) {
   const commonRoot = findCommonRoot(cwd, resolvedPath)
   const relativePath = path.relative(commonRoot, resolvedPath)
 
-  const packageRoots = await fg.glob("**/package.json", {
+  const packageRoots = await glob("**/package.json", {
     cwd: commonRoot,
     deep: 3,
     ignore: ["**/node_modules/**", "**/dist/**", "**/build/**", "**/public/**"],

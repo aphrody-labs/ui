@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { Config } from "../get-config"
 import { BUILTIN_REGISTRIES } from "./constants"

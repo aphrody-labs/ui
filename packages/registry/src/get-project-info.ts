@@ -10,10 +10,11 @@ import {
 import { getShadcnRegistryIndex } from "@/src/registry/api"
 import { SHADCN_URL } from "@/src/registry/constants"
 import { rawConfigSchema } from "@/src/registry/schema"
-import fg from "fast-glob"
 import fs from "fs-extra"
 import { loadConfig } from "tsconfig-paths"
 import { z } from "zod"
+
+import { glob, globSync } from "./glob"
 
 export type TailwindVersion = "v3" | "v4" | null
 
@@ -57,7 +58,7 @@ export async function getProjectInfo(
     aliasPrefixInfo,
     packageJson,
   ] = await Promise.all([
-    fg.glob(
+    glob(
       "**/{next,vite,astro,app}.config.*|gatsby-config.*|composer.json|react-router.config.*",
       {
         cwd,
@@ -261,7 +262,7 @@ export async function getTailwindCssFile(cwd: string, configCssFile?: string) {
   }
 
   const [files, tailwindVersion] = await Promise.all([
-    fg.glob(["**/*.css", "**/*.scss"], {
+    glob(["**/*.css", "**/*.scss"], {
       cwd,
       deep: 5,
       ignore: PROJECT_SHARED_IGNORE,
@@ -291,7 +292,7 @@ export async function getTailwindCssFile(cwd: string, configCssFile?: string) {
 }
 
 export async function getTailwindConfigFile(cwd: string) {
-  const files = await fg.glob("tailwind.config.*", {
+  const files = await glob("tailwind.config.*", {
     cwd,
     deep: 3,
     ignore: PROJECT_SHARED_IGNORE,
@@ -364,7 +365,7 @@ export async function getProjectAliasInfo(cwd: string) {
 }
 
 export async function isTypeScriptProject(cwd: string) {
-  const files = await fg.glob("tsconfig.*", {
+  const files = await glob("tsconfig.*", {
     cwd,
     deep: 1,
     ignore: PROJECT_SHARED_IGNORE,
@@ -671,7 +672,7 @@ export async function getProjectComponents(cwd: string) {
   const registryIndex = await getShadcnRegistryIndex()
   const registryNames = new Set(registryIndex?.map((item) => item.name) ?? [])
 
-  const files = await fsPromises.readdir(uiDir)
+  const files = (await fsPromises.readdir(uiDir)).sort()
   return files
     .filter((f) => /\.(tsx|jsx)$/.test(f))
     .map((f) => path.basename(f, path.extname(f)))

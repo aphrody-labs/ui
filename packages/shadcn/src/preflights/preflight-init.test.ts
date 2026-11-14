@@ -1,5 +1,5 @@
 import { preFlightInit } from "@/src/preflights/preflight-init"
-import { afterEach, describe, expect, test, vi } from "vitest"
+import { afterEach, describe, expect, test, vi } from "bun:test"
 import { z } from "zod"
 
 const { mockedGetProjectInfo, mockedExistsSync, mockedLogger } = vi.hoisted(

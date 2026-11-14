@@ -1,6 +1,6 @@
 import path from "path"
+import { expect, it } from "bun:test"
 import { build } from "esbuild"
-import { expect, it } from "vitest"
 
 import * as registry from "./index"
 

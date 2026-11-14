@@ -1,6 +1,6 @@
 import { createConfig } from "@/src/get-config"
 import { BUILTIN_REGISTRIES, FALLBACK_STYLE } from "@/src/registry/constants"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { configWithDefaults } from "./config"
 

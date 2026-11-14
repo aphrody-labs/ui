@@ -1,5 +1,5 @@
 import { logger } from "@/src/logger"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { addComponents, validateFilesTarget } from "./add-components"
 

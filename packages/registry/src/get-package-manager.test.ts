@@ -1,5 +1,5 @@
 import { getFixturesDir } from "@/src/test-helpers"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import {
   getPackageManager,

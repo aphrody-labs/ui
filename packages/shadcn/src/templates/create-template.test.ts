@@ -1,8 +1,8 @@
 import path from "path"
 import { withTempDir } from "@/src/test-helpers"
-import { execa } from "execa"
+import { exec } from "@shadcn/registry/internal/exec"
+import { describe, expect, it, vi } from "bun:test"
 import fs from "fs-extra"
-import { describe, expect, it, vi } from "vitest"
 
 import {
   adaptWorkspaceConfig,
@@ -10,8 +10,8 @@ import {
   rewriteWorkspaceProtocol,
 } from "./create-template"
 
-vi.mock("execa", () => ({
-  execa: vi.fn().mockResolvedValue({ stdout: "9.9.9" }),
+vi.mock("@shadcn/registry/internal/exec", () => ({
+  exec: vi.fn().mockResolvedValue({ stdout: "9.9.9" }),
 }))
 
 describe("getInstallArgs", () => {
@@ -267,8 +267,8 @@ describe("adaptWorkspaceConfig", () => {
     })
   })
 
-  it("falls back to <pm>@* when execa rejects", async () => {
-    vi.mocked(execa).mockRejectedValueOnce(new Error("not found"))
+  it("falls back to <pm>@* when exec rejects", async () => {
+    vi.mocked(exec).mockRejectedValueOnce(new Error("not found"))
 
     await withTempDir(async (dir) => {
       await writeMonorepoFixture(dir)

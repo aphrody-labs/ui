@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "fs"
 import path from "path"
 import type { Config } from "@/src/get-config"
-import { beforeEach, describe, expect, test } from "vitest"
+import { beforeEach, describe, expect, test } from "bun:test"
 
 import { transform, type Transformer, type TransformOpts } from "."
 import stone from "../../test/fixtures/colors/stone.json"

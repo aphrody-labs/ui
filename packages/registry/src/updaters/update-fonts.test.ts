@@ -12,7 +12,7 @@ import {
   it,
   vi,
   type MockInstance,
-} from "vitest"
+} from "bun:test"
 
 import {
   findLayoutFile,

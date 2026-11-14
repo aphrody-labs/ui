@@ -1,7 +1,8 @@
 import { getRegistryEnvFromContext } from "@/src/registry/context"
 import type { GitHubSource } from "@/src/registry/github-ref"
 import { fetchWithProxy } from "@/src/registry/proxy"
-import { execa } from "execa"
+
+import { exec } from "../exec"
 
 const GITHUB_API_URL = "https://api.github.com"
 const GITHUB_API_VERSION = "2022-11-28"
@@ -229,7 +230,7 @@ function classifyGhFailure(error: unknown) {
 async function runGhApi(endpoint: string, accept: string) {
   return withGhSlot(async () => {
     try {
-      const result = await execa(
+      const result = await exec(
         "gh",
         [
           "api",

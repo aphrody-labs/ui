@@ -6,10 +6,10 @@ import { getConfig, type Config } from "@/src/get-config"
 import { type ProjectInfo } from "@/src/get-project-info"
 import { logger } from "@/src/logger"
 import { getFixturesDir } from "@/src/test-helpers"
+import { afterAll, afterEach, describe, expect, it, vi } from "bun:test"
 import prompts from "prompts"
 import { Project } from "ts-morph"
 import { loadConfig, type ConfigLoaderSuccessResult } from "tsconfig-paths"
-import { afterAll, afterEach, describe, expect, it, vi } from "vitest"
 
 import {
   findCommonRoot,

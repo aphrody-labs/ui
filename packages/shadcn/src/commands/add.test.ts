@@ -10,10 +10,6 @@ import {
   SHADCN_URL,
 } from "@shadcn/registry/internal/registry/constants"
 import { clearRegistryCache } from "@shadcn/registry/internal/registry/fetcher"
-import fs from "fs-extra"
-import { http, HttpResponse } from "msw"
-import { setupServer } from "msw/node"
-import prompts from "prompts"
 import {
   afterAll,
   afterEach,
@@ -23,7 +19,11 @@ import {
   expect,
   it,
   vi,
-} from "vitest"
+} from "bun:test"
+import fs from "fs-extra"
+import { http, HttpResponse } from "msw"
+import { setupServer } from "msw/node"
+import prompts from "prompts"
 
 import { add } from "./add"
 
@@ -884,8 +884,7 @@ describe("add command", () => {
               (options) =>
                 !Array.isArray(options) && options.name === "components"
             ) as
-            | { choices?: Array<{ value: string }>; name?: string }
-            | undefined
+            { choices?: Array<{ value: string }>; name?: string } | undefined
           const choices = (componentPrompt?.choices ?? []).map(
             (choice) => choice.value
           )

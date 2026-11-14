@@ -1,8 +1,8 @@
 import { ensureRegistriesInConfig } from "@/src/utils/registries"
 import { getConfig } from "@shadcn/registry/internal/get-config"
 import { searchRegistries } from "@shadcn/registry/internal/registry/search"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 import fsExtra from "fs-extra"
-import { beforeEach, describe, expect, it, vi } from "vitest"
 
 import { search } from "./search"
 

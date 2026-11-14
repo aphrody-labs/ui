@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { dirname, join, relative, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 const registryDir = dirname(fileURLToPath(import.meta.url))
 const appDir = resolve(registryDir, "..")

@@ -2,7 +2,7 @@ import { promises as fs } from "fs"
 import { tmpdir } from "os"
 import path from "path"
 import * as ERRORS from "@/src/utils/errors"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "bun:test"
 
 import { preFlightMigrate } from "./preflight-migrate"
 

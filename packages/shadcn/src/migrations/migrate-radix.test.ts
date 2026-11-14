@@ -1,5 +1,5 @@
 import { promises as fs } from "fs"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { migrateRadix, migrateRadixFile } from "./migrate-radix"
 
@@ -12,8 +12,8 @@ vi.mock("fs", () => ({
   },
 }))
 
-vi.mock("fast-glob", () => ({
-  default: vi.fn(),
+vi.mock("@shadcn/registry/internal/glob", () => ({
+  glob: vi.fn(),
 }))
 
 vi.mock("prompts", () => ({
@@ -904,17 +904,16 @@ describe("migrateRadix - package.json updates", () => {
     }
 
     // Mock package info
-    const { getPackageInfo } = await import(
-      "@shadcn/registry/internal/get-package-info"
-    )
+    const { getPackageInfo } =
+      await import("@shadcn/registry/internal/get-package-info")
     vi.mocked(getPackageInfo).mockReturnValue(mockPackageJson)
 
     // Mock file system
     mockFs.writeFile.mockResolvedValue(undefined)
 
-    // Mock fast-glob to return files with Radix imports
-    const fg = await import("fast-glob")
-    vi.mocked(fg.default).mockResolvedValue(["dialog.tsx", "select.tsx"])
+    // Mock glob to return files with Radix imports
+    const fg = await import("@shadcn/registry/internal/glob")
+    vi.mocked(fg.glob).mockResolvedValue(["dialog.tsx", "select.tsx"])
 
     // Mock file reads to return content with Radix imports
     mockFs.readFile
@@ -930,9 +929,8 @@ describe("migrateRadix - package.json updates", () => {
     vi.mocked(prompts.default).mockResolvedValue({ confirm: true })
 
     // Mock package manager detection
-    const { getPackageManager } = await import(
-      "@shadcn/registry/internal/get-package-manager"
-    )
+    const { getPackageManager } =
+      await import("@shadcn/registry/internal/get-package-manager")
     vi.mocked(getPackageManager).mockResolvedValue("npm")
 
     await migrateRadix(mockConfig)
@@ -952,17 +950,15 @@ describe("migrateRadix - package.json updates", () => {
       },
     }
 
-    const { getPackageInfo } = await import(
-      "@shadcn/registry/internal/get-package-info"
-    )
+    const { getPackageInfo } =
+      await import("@shadcn/registry/internal/get-package-info")
     vi.mocked(getPackageInfo).mockReturnValue(mockPackageJson)
 
-    const { updateDependencies } = await import(
-      "@shadcn/registry/internal/updaters/update-dependencies"
-    )
+    const { updateDependencies } =
+      await import("@shadcn/registry/internal/updaters/update-dependencies")
 
-    const fg = await import("fast-glob")
-    vi.mocked(fg.default).mockResolvedValue(["component.tsx"])
+    const fg = await import("@shadcn/registry/internal/glob")
+    vi.mocked(fg.glob).mockResolvedValue(["component.tsx"])
 
     // Mock file read to return content with no Radix imports
     mockFs.readFile.mockResolvedValue('import React from "react"')
@@ -983,13 +979,12 @@ describe("migrateRadix - package.json updates", () => {
   })
 
   it("should handle missing package.json gracefully", async () => {
-    const { getPackageInfo } = await import(
-      "@shadcn/registry/internal/get-package-info"
-    )
+    const { getPackageInfo } =
+      await import("@shadcn/registry/internal/get-package-info")
     vi.mocked(getPackageInfo).mockReturnValue(null)
 
-    const fg = await import("fast-glob")
-    vi.mocked(fg.default).mockResolvedValue(["component.tsx"])
+    const fg = await import("@shadcn/registry/internal/glob")
+    vi.mocked(fg.glob).mockResolvedValue(["component.tsx"])
 
     // Mock file read
     mockFs.readFile.mockResolvedValue('import React from "react"')
@@ -1009,19 +1004,17 @@ describe("migrateRadix - package.json updates", () => {
       },
     }
 
-    const { getPackageInfo } = await import(
-      "@shadcn/registry/internal/get-package-info"
-    )
+    const { getPackageInfo } =
+      await import("@shadcn/registry/internal/get-package-info")
     vi.mocked(getPackageInfo).mockReturnValue(mockPackageJson)
 
-    const { updateDependencies } = await import(
-      "@shadcn/registry/internal/updaters/update-dependencies"
-    )
+    const { updateDependencies } =
+      await import("@shadcn/registry/internal/updaters/update-dependencies")
 
     mockFs.writeFile.mockResolvedValue(undefined)
 
-    const fg = await import("fast-glob")
-    vi.mocked(fg.default).mockResolvedValue(["dialog.tsx"])
+    const fg = await import("@shadcn/registry/internal/glob")
+    vi.mocked(fg.glob).mockResolvedValue(["dialog.tsx"])
 
     // Mock file read to return content with Radix imports
     mockFs.readFile.mockResolvedValue(
@@ -1066,21 +1059,19 @@ describe("migrateRadix - package.json updates", () => {
       },
     }
 
-    const { getPackageInfo } = await import(
-      "@shadcn/registry/internal/get-package-info"
-    )
+    const { getPackageInfo } =
+      await import("@shadcn/registry/internal/get-package-info")
     vi.mocked(getPackageInfo).mockReturnValue(mockPackageJson)
 
-    const { getPackageManager } = await import(
-      "@shadcn/registry/internal/get-package-manager"
-    )
+    const { getPackageManager } =
+      await import("@shadcn/registry/internal/get-package-manager")
     vi.mocked(getPackageManager).mockResolvedValue("npm")
 
     mockFs.writeFile.mockResolvedValue(undefined)
 
-    // Mock fast-glob to return files with only dialog and select imports
-    const fg = await import("fast-glob")
-    vi.mocked(fg.default).mockResolvedValue(["dialog.tsx"])
+    // Mock glob to return files with only dialog and select imports
+    const fg = await import("@shadcn/registry/internal/glob")
+    vi.mocked(fg.glob).mockResolvedValue(["dialog.tsx"])
 
     // Mock file read to return content with only dialog and select
     mockFs.readFile.mockResolvedValue(`
@@ -1123,20 +1114,18 @@ describe("migrateRadix - package.json updates", () => {
       },
     }
 
-    const { getPackageInfo } = await import(
-      "@shadcn/registry/internal/get-package-info"
-    )
+    const { getPackageInfo } =
+      await import("@shadcn/registry/internal/get-package-info")
     vi.mocked(getPackageInfo).mockReturnValue(mockPackageJson)
 
-    const { getPackageManager } = await import(
-      "@shadcn/registry/internal/get-package-manager"
-    )
+    const { getPackageManager } =
+      await import("@shadcn/registry/internal/get-package-manager")
     vi.mocked(getPackageManager).mockResolvedValue("npm")
 
     mockFs.writeFile.mockResolvedValue(undefined)
 
-    const fg = await import("fast-glob")
-    vi.mocked(fg.default).mockResolvedValue(["dialog.tsx"])
+    const fg = await import("@shadcn/registry/internal/glob")
+    vi.mocked(fg.glob).mockResolvedValue(["dialog.tsx"])
 
     // Mock file read to return content with dialog imports but NOT icons
     mockFs.readFile.mockResolvedValue(

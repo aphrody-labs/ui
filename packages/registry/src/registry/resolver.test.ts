@@ -3,8 +3,6 @@ import { promises as fs } from "fs"
 import { tmpdir } from "os"
 import path from "path"
 import { createConfig } from "@/src/get-config"
-import { http, HttpResponse } from "msw"
-import { setupServer } from "msw/node"
 import {
   afterAll,
   beforeAll,
@@ -14,7 +12,9 @@ import {
   it,
   test,
   vi,
-} from "vitest"
+} from "bun:test"
+import { http, HttpResponse } from "msw"
+import { setupServer } from "msw/node"
 
 import { createRegistryServer } from "../../../tests/src/utils/registry"
 import { setRegistryHeaders } from "./context"

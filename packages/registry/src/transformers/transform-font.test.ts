@@ -1,7 +1,7 @@
 import { promises as fs } from "fs"
 import os from "os"
 import path from "path"
-import { afterEach, describe, expect, test } from "vitest"
+import { afterEach, describe, expect, test } from "bun:test"
 
 import { transform } from "."
 import { createConfig, type Config } from "../get-config"

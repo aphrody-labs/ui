@@ -1,7 +1,7 @@
 import { promises as fs } from "fs"
 import { tmpdir } from "os"
 import path from "path"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "bun:test"
 
 import { loadEnvFiles } from "./env-loader"
 

@@ -1,9 +1,9 @@
 import { randomUUID } from "crypto"
 import path from "path"
 import { fileURLToPath } from "url"
-import { execa } from "execa"
 import fs from "fs-extra"
 
+import { exec } from "../../../registry/src/exec"
 import { TEMP_DIR } from "./setup"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -42,7 +42,7 @@ export async function runCommand(
   const timeout = options?.timeout ?? 60000
 
   try {
-    const childProcess = execa("node", [SHADCN_CLI_PATH, ...args], {
+    const childProcess = exec(process.execPath, [SHADCN_CLI_PATH, ...args], {
       cwd,
       env: {
         ...process.env,

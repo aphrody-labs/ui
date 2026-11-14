@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "fs"
 import path from "path"
 import type { Config } from "@/src/get-config"
 import { registryItemSchema, type RegistryFontItem } from "@/src/schema"
-import { describe, expect, test } from "vitest"
+import { describe, expect, test } from "bun:test"
 
 import { transformLayoutFonts } from "./update-fonts"
 

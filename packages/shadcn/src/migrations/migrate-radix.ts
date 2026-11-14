@@ -2,11 +2,11 @@ import { promises as fs } from "fs"
 import path from "path"
 import { Config } from "@shadcn/registry/internal/get-config"
 import { getPackageInfo } from "@shadcn/registry/internal/get-package-info"
+import { glob, globSync } from "@shadcn/registry/internal/glob"
 import { highlighter } from "@shadcn/registry/internal/highlighter"
 import { logger } from "@shadcn/registry/internal/logger"
 import { spinner } from "@shadcn/registry/internal/spinner"
 import { updateDependencies } from "@shadcn/registry/internal/updaters/update-dependencies"
-import fg from "fast-glob"
 import prompts from "prompts"
 
 function toPascalCase(str: string): string {
@@ -112,7 +112,7 @@ export async function migrateRadix(
     const isGlob = options.path.includes("*")
 
     if (isGlob) {
-      files = await fg(options.path, {
+      files = await glob(options.path, {
         cwd: basePath,
         onlyFiles: true,
         ignore: ["**/node_modules/**"],
@@ -128,7 +128,7 @@ export async function migrateRadix(
 
       if (stat.isDirectory()) {
         basePath = fullPath
-        files = await fg("**/*.{js,ts,jsx,tsx}", {
+        files = await glob("**/*.{js,ts,jsx,tsx}", {
           cwd: basePath,
           onlyFiles: true,
           ignore: ["**/node_modules/**"],
@@ -153,7 +153,7 @@ export async function migrateRadix(
     }
 
     basePath = config.resolvedPaths.ui
-    files = await fg("**/*.{js,ts,jsx,tsx}", {
+    files = await glob("**/*.{js,ts,jsx,tsx}", {
       cwd: basePath,
       onlyFiles: true,
       suppressErrors: true,

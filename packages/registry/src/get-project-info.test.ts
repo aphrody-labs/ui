@@ -5,8 +5,8 @@ import { FRAMEWORKS } from "@/src/frameworks"
 import { getConfig, resolveConfigPaths } from "@/src/get-config"
 import { getShadcnRegistryIndex } from "@/src/registry/api"
 import { getFixturesDir } from "@/src/test-helpers"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 import fsExtra from "fs-extra"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   getFrameworkVersion,

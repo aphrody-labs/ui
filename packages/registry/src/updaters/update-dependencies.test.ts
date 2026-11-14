@@ -1,9 +1,9 @@
 import type { Config } from "@/src/get-config"
 import { getFixturesDir } from "@/src/test-helpers"
-import { execa } from "execa"
+import { afterEach, describe, expect, it, vi } from "bun:test"
 import prompts from "prompts"
-import { afterEach, describe, expect, it, vi } from "vitest"
 
+import { exec } from "../exec"
 import {
   assertSafeDependencies,
   installDependencies,
@@ -11,12 +11,12 @@ import {
   updateDependencies,
 } from "./update-dependencies"
 
-vi.mock("execa")
+vi.mock("../exec")
 vi.mock("prompts")
 
 describe("updateDependencies", () => {
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it.each([
@@ -233,11 +233,11 @@ describe("updateDependencies", () => {
         expect(prompts).not.toHaveBeenCalled()
       }
 
-      expect(execa).toHaveBeenCalledWith(expectedPackageManager, expectedArgs, {
+      expect(exec).toHaveBeenCalledWith(expectedPackageManager, expectedArgs, {
         cwd: config?.resolvedPaths.cwd,
       })
 
-      expect(execa).toHaveBeenCalledWith(
+      expect(exec).toHaveBeenCalledWith(
         expectedPackageManager,
         expectedDevArgs,
         { cwd: config?.resolvedPaths.cwd }
@@ -263,13 +263,13 @@ describe("updateDependencies", () => {
       { silent: true }
     )
 
-    expect(execa).toHaveBeenCalledTimes(2)
-    expect(execa).toHaveBeenCalledWith(
+    expect(exec).toHaveBeenCalledTimes(2)
+    expect(exec).toHaveBeenCalledWith(
       "pnpm",
       ["add", "--", "react-is", "recharts@3.8.0"],
       { cwd }
     )
-    expect(execa).toHaveBeenCalledWith(
+    expect(exec).toHaveBeenCalledWith(
       "pnpm",
       ["add", "-D", "--", "typescript"],
       {
@@ -288,8 +288,8 @@ describe("updateDependencies", () => {
       { silent: true }
     )
 
-    expect(execa).toHaveBeenCalledTimes(1)
-    expect(execa).toHaveBeenCalledWith(
+    expect(exec).toHaveBeenCalledTimes(1)
+    expect(exec).toHaveBeenCalledWith(
       "pnpm",
       ["add", "--", "recharts@3.8.0", "@base-ui/react@1.4.1"],
       { cwd }
@@ -308,7 +308,7 @@ describe("updateDependencies", () => {
       { silent: true }
     )
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(exec).toHaveBeenCalledWith(
       "npx",
       ["expo", "install", "--", "recharts", "react-is"],
       { cwd }
@@ -327,7 +327,7 @@ describe("updateDependencies", () => {
       )
     ).rejects.toThrow(/cannot start with/)
 
-    expect(execa).not.toHaveBeenCalledWith(
+    expect(exec).not.toHaveBeenCalledWith(
       "pnpm",
       expect.arrayContaining(["--registry=http://malicious"]),
       expect.anything()
@@ -355,7 +355,7 @@ describe("assertSafeDependencies", () => {
 
 describe("dependency commands", () => {
   afterEach(() => {
-    vi.restoreAllMocks()
+    vi.clearAllMocks()
   })
 
   it("installs dependencies from a cwd without a shadcn config", async () => {
@@ -363,7 +363,7 @@ describe("dependency commands", () => {
 
     await installDependencies(cwd, ["cn"])
 
-    expect(execa).toHaveBeenCalledWith("pnpm", ["add", "--", "cn"], {
+    expect(exec).toHaveBeenCalledWith("pnpm", ["add", "--", "cn"], {
       cwd,
     })
   })
@@ -373,7 +373,7 @@ describe("dependency commands", () => {
 
     await removeDependencies(cwd, ["recharts", "not-installed"])
 
-    expect(execa).toHaveBeenCalledWith("pnpm", ["remove", "--", "recharts"], {
+    expect(exec).toHaveBeenCalledWith("pnpm", ["remove", "--", "recharts"], {
       cwd,
     })
   })
@@ -383,7 +383,7 @@ describe("dependency commands", () => {
 
     await removeDependencies(cwd, ["react-day-picker"])
 
-    expect(execa).toHaveBeenCalledWith(
+    expect(exec).toHaveBeenCalledWith(
       "npm",
       ["uninstall", "--no-audit", "--no-fund", "--", "react-day-picker"],
       { cwd }

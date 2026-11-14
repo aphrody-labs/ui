@@ -4,8 +4,8 @@ import {
   getRegistriesIndex,
 } from "@shadcn/registry/internal/registry/api"
 import { resolveRegistryNamespaces } from "@shadcn/registry/internal/registry/namespaces"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 import fs from "fs-extra"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { ensureRegistriesInConfig } from "./registries"
 

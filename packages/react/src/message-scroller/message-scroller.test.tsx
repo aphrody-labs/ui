@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { act } from "react"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 import { createRoot, hydrateRoot, type Root } from "react-dom/client"
 import { renderToString } from "react-dom/server"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   MessageScroller as MessageScrollerPrimitive,
@@ -1643,7 +1643,9 @@ function renderPendingScrollToContainer(tree: React.ReactElement) {
     scroller: container.querySelector("[data-testid=scroller]"),
     viewport: container.querySelector("[data-testid=viewport]"),
     async hydrate() {
-      const consoleError = vi.spyOn(console, "error").mockImplementation(() => {})
+      const consoleError = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {})
 
       await act(async () => {
         hydrateRoot(container, tree)

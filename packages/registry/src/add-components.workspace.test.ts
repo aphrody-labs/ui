@@ -8,8 +8,8 @@ import { resolveRegistryTree } from "@/src/registry/resolver"
 import { updateFiles } from "@/src/updaters/update-files"
 import { updateFonts } from "@/src/updaters/update-fonts"
 import { updateTailwindConfig } from "@/src/updaters/update-tailwind-config"
+import { afterEach, describe, expect, it, vi } from "bun:test"
 import fs from "fs-extra"
-import { afterEach, describe, expect, it, vi } from "vitest"
 
 // Mock all external dependencies. Unlike the sibling add-components.test.ts,
 // updateFiles and get-config keep their REAL implementations by default —

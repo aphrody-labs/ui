@@ -59,9 +59,9 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
-    "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
-    "test": "vitest run"
+    "format:write": "bun fmt --no-script \"**/*.{ts,tsx,mdx}\"",
+    "format:check": "bun fmt --no-script --check \"**/*.{ts,tsx,mdx}\"",
+    "test": "bun test"
   },
   "dependencies": {
     "@babel/core": "^7.28.0",
@@ -72,7 +72,6 @@
     "cn": "^0.2.4",
     "code-block-writer": "^13.0.3",
     "deepmerge": "^4.3.1",
-    "execa": "^9.6.0",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.1",
     "fuzzysort": "^3.1.0",
@@ -91,6 +90,7 @@
   "devDependencies": {
     "@antfu/ni": "^25.0.0",
     "@types/babel__core": "^7.20.5",
+    "@types/bun": "^1.4.4",
     "@types/fs-extra": "^11.0.4",
     "@types/prompts": "^2.4.9",
     "@types/stringify-object": "^4.0.5",

@@ -1,6 +1,6 @@
 import { getFixturesDir, withTempDir } from "@/src/test-helpers"
+import { describe, expect, it } from "bun:test"
 import fs from "fs-extra"
-import { describe, expect, it } from "vitest"
 
 describe("getFixturesDir", () => {
   it("resolves an absolute path into test/fixtures", async () => {

@@ -1,7 +1,7 @@
 import os from "os"
 import path from "path"
+import { afterAll, beforeAll, describe, expect, it } from "bun:test"
 import fs from "fs-extra"
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 import {
   createFixtureTestDirectory,

@@ -1,6 +1,6 @@
 import type { Config } from "@/src/get-config"
 import { transformRsc } from "@/src/transformers/transform-rsc"
-import { afterEach, beforeEach, describe, expect, it } from "vitest"
+import { afterEach, beforeEach, describe, expect, it } from "bun:test"
 
 import { transform } from "."
 

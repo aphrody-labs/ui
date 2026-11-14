@@ -15,7 +15,7 @@ import { transformMenu } from "@shadcn/registry/internal/transformers/transform-
 import { transformRsc } from "@shadcn/registry/internal/transformers/transform-rsc"
 import { transformRtl } from "@shadcn/registry/internal/transformers/transform-rtl"
 import { transformTwPrefixes } from "@shadcn/registry/internal/transformers/transform-tw-prefix"
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "bun:test"
 
 import { dryRunComponents } from "./dry-run"
 import type { DryRunResult } from "./dry-run"

@@ -1,5 +1,5 @@
 import { StreamProcessor } from "@tanstack/ai/client"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { createChat } from "./index"
 import { getMessageText } from "./parts"

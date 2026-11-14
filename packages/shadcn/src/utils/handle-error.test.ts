@@ -13,7 +13,7 @@ import {
   expect,
   it,
   vi,
-} from "vitest"
+} from "bun:test"
 
 vi.mock("@shadcn/registry/internal/highlighter", () => ({
   highlighter: {

@@ -1,6 +1,6 @@
 import { type Config } from "@/src/get-config"
 import { transformIcons } from "@/src/transformers/transform-icons"
-import { describe, expect, test } from "vitest"
+import { describe, expect, test } from "bun:test"
 
 import { transform } from "."
 

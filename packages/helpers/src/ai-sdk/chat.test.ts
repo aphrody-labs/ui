@@ -1,5 +1,5 @@
 import type { UIMessage } from "ai"
-import { describe, expect, expectTypeOf, it } from "vitest"
+import { describe, expect, expectTypeOf, it } from "bun:test"
 
 import { testChatContract } from "../test/chat-contract"
 import { createChat } from "./index"

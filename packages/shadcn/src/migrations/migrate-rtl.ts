@@ -1,12 +1,12 @@
 import { promises as fs } from "fs"
 import path from "path"
 import { Config } from "@shadcn/registry/internal/get-config"
+import { glob, globSync } from "@shadcn/registry/internal/glob"
 import { highlighter } from "@shadcn/registry/internal/highlighter"
 import { logger } from "@shadcn/registry/internal/logger"
 import { SHADCN_URL } from "@shadcn/registry/internal/registry/constants"
 import { spinner } from "@shadcn/registry/internal/spinner"
 import { transformDirection } from "@shadcn/registry/internal/transformers/transform-rtl"
-import fg from "fast-glob"
 import prompts from "prompts"
 
 // Files that may need manual RTL adjustments.
@@ -32,7 +32,7 @@ export async function migrateRtl(
     const isGlob = options.path.includes("*")
 
     if (isGlob) {
-      files = await fg(options.path, {
+      files = await glob(options.path, {
         cwd: basePath,
         onlyFiles: true,
         ignore: ["**/node_modules/**"],
@@ -48,7 +48,7 @@ export async function migrateRtl(
 
       if (stat.isDirectory()) {
         basePath = fullPath
-        files = await fg("**/*.{js,ts,jsx,tsx}", {
+        files = await glob("**/*.{js,ts,jsx,tsx}", {
           cwd: basePath,
           onlyFiles: true,
           ignore: ["**/node_modules/**"],
@@ -73,7 +73,7 @@ export async function migrateRtl(
     }
 
     basePath = config.resolvedPaths.ui
-    files = await fg("**/*.{js,ts,jsx,tsx}", {
+    files = await glob("**/*.{js,ts,jsx,tsx}", {
       cwd: basePath,
       onlyFiles: true,
       suppressErrors: true,

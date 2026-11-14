@@ -3,7 +3,7 @@ import path from "path"
 import { addsSyntaxErrors, countSyntaxErrors } from "@/src/codemod/parse"
 import type { Config } from "@/src/get-config"
 import { registryItemTailwindSchema } from "@/src/registry/schema"
-import { describe, expect, test } from "vitest"
+import { describe, expect, test } from "bun:test"
 
 import {
   transformTailwindConfig,

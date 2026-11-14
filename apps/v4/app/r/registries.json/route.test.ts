@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { loadRegistryHealthSnapshot } from "@/lib/registry-health/blob"
 import type {

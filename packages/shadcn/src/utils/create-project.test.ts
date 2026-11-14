@@ -1,12 +1,10 @@
+import { exec } from "@shadcn/registry/internal/exec"
 import {
   getPackageManager,
   getPackageManagerFromUserAgent,
   getPackageRunnerCommand,
 } from "@shadcn/registry/internal/get-package-manager"
 import { spinner } from "@shadcn/registry/internal/spinner"
-import { execa } from "execa"
-import fs from "fs-extra"
-import prompts from "prompts"
 import {
   afterEach,
   beforeEach,
@@ -15,13 +13,15 @@ import {
   it,
   vi,
   type MockInstance,
-} from "vitest"
+} from "bun:test"
+import fs from "fs-extra"
+import prompts from "prompts"
 
 import { createProject } from "./create-project"
 
 // Mock dependencies
 vi.mock("fs-extra")
-vi.mock("execa")
+vi.mock("@shadcn/registry/internal/exec")
 vi.mock("prompts")
 vi.mock("@shadcn/registry/internal/get-package-manager", () => ({
   getPackageManager: vi.fn().mockResolvedValue("npm"),
@@ -55,7 +55,7 @@ describe("createProject", () => {
     vi.mocked(fs.remove).mockResolvedValue(undefined)
 
     // Mock execa for git clone and package manager install.
-    vi.mocked(execa).mockResolvedValue({
+    vi.mocked(exec).mockResolvedValue({
       stdout: "",
       stderr: "",
       exitCode: 0,

@@ -6,7 +6,7 @@ import {
   type Server as NetServer,
   type Socket,
 } from "net"
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest"
+import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test"
 
 import { createProxyDispatcher } from "./proxy"
 
@@ -201,88 +201,91 @@ describe("test proxy server contract", () => {
   })
 })
 
-describe("proxy dispatcher integration", () => {
-  it("makes direct requests when no proxy env is set", async () => {
-    const dispatcher = createProxyDispatcher()
-    expect(dispatcher).toBeUndefined()
-
-    const response = await fetch(`${originUrl}/test.json`)
-    const body = (await response.json()) as { from: string }
-    expect(body.from).toBe("origin")
-    expect(proxyHits).toHaveLength(0)
-  })
-
-  it.each(["HTTP_PROXY", "http_proxy"] as const)(
-    "routes HTTP requests through the proxy via CONNECT tunnel when %s is set",
-    async (name) => {
-      process.env[name] = proxyUrl
-      const dispatcher = createProxyDispatcher()
-
-      const response = await fetch(`${originUrl}/test.json`, { dispatcher })
-      const body = (await response.json()) as { from: string }
-      // Response body comes from origin (proxy just tunneled the bytes).
-      expect(body.from).toBe("origin")
-      // Proof the proxy was used: a CONNECT was recorded against the origin.
-      const originHost = new URL(originUrl).host
-      expect(proxyHits).toEqual([{ url: originHost, method: "CONNECT" }])
-    }
-  )
-
-  it.each(["NO_PROXY", "no_proxy"] as const)(
-    "bypasses the proxy when %s matches the destination host",
-    async (noProxyName) => {
-      process.env.HTTP_PROXY = proxyUrl
-      process.env[noProxyName] = "127.0.0.1"
-      const dispatcher = createProxyDispatcher()
-
-      const response = await fetch(`${originUrl}/test.json`, { dispatcher })
-      const body = (await response.json()) as { from: string }
-      expect(body.from).toBe("origin")
-      expect(proxyHits).toHaveLength(0)
-    }
-  )
-
-  it("routes through the proxy when destination is not in NO_PROXY list", async () => {
-    process.env.HTTP_PROXY = proxyUrl
-    process.env.NO_PROXY = "example.com"
-    const dispatcher = createProxyDispatcher()
-
-    const response = await fetch(`${originUrl}/test.json`, { dispatcher })
-    const body = (await response.json()) as { from: string }
-    expect(body.from).toBe("origin")
-    const originHost = new URL(originUrl).host
-    expect(proxyHits).toEqual([{ url: originHost, method: "CONNECT" }])
-  })
-
-  describe("SOCKS via ALL_PROXY", () => {
-    it.each(["ALL_PROXY", "all_proxy"] as const)(
-      "routes HTTP requests through the SOCKS5 proxy when %s=socks5://...",
-      async (name) => {
-        process.env[name] = socksUrl
-        const dispatcher = createProxyDispatcher()
-
-        const response = await fetch(`${originUrl}/test.json`, { dispatcher })
-        const body = (await response.json()) as { from: string }
-        expect(body.from).toBe("origin")
-        // SOCKS server saw a CONNECT to the origin host:port.
-        const originAddr = new URL(originUrl)
-        expect(socksHits).toEqual([
-          { host: originAddr.hostname, port: Number(originAddr.port) },
-        ])
-        // HTTP proxy was not involved.
-        expect(proxyHits).toHaveLength(0)
-      }
-    )
-
-    it("does not invoke SOCKS when ALL_PROXY scheme is http (falls through to direct)", async () => {
-      process.env.ALL_PROXY = `http://127.0.0.1:1`
+describe.skipIf(typeof Bun !== "undefined")(
+  "proxy dispatcher integration",
+  () => {
+    it("makes direct requests when no proxy env is set", async () => {
       const dispatcher = createProxyDispatcher()
       expect(dispatcher).toBeUndefined()
 
       const response = await fetch(`${originUrl}/test.json`)
       const body = (await response.json()) as { from: string }
       expect(body.from).toBe("origin")
-      expect(socksHits).toHaveLength(0)
+      expect(proxyHits).toHaveLength(0)
     })
-  })
-})
+
+    it.each(["HTTP_PROXY", "http_proxy"] as const)(
+      "routes HTTP requests through the proxy via CONNECT tunnel when %s is set",
+      async (name) => {
+        process.env[name] = proxyUrl
+        const dispatcher = createProxyDispatcher()
+
+        const response = await fetch(`${originUrl}/test.json`, { dispatcher })
+        const body = (await response.json()) as { from: string }
+        // Response body comes from origin (proxy just tunneled the bytes).
+        expect(body.from).toBe("origin")
+        // Proof the proxy was used: a CONNECT was recorded against the origin.
+        const originHost = new URL(originUrl).host
+        expect(proxyHits).toEqual([{ url: originHost, method: "CONNECT" }])
+      }
+    )
+
+    it.each(["NO_PROXY", "no_proxy"] as const)(
+      "bypasses the proxy when %s matches the destination host",
+      async (noProxyName) => {
+        process.env.HTTP_PROXY = proxyUrl
+        process.env[noProxyName] = "127.0.0.1"
+        const dispatcher = createProxyDispatcher()
+
+        const response = await fetch(`${originUrl}/test.json`, { dispatcher })
+        const body = (await response.json()) as { from: string }
+        expect(body.from).toBe("origin")
+        expect(proxyHits).toHaveLength(0)
+      }
+    )
+
+    it("routes through the proxy when destination is not in NO_PROXY list", async () => {
+      process.env.HTTP_PROXY = proxyUrl
+      process.env.NO_PROXY = "example.com"
+      const dispatcher = createProxyDispatcher()
+
+      const response = await fetch(`${originUrl}/test.json`, { dispatcher })
+      const body = (await response.json()) as { from: string }
+      expect(body.from).toBe("origin")
+      const originHost = new URL(originUrl).host
+      expect(proxyHits).toEqual([{ url: originHost, method: "CONNECT" }])
+    })
+
+    describe("SOCKS via ALL_PROXY", () => {
+      it.each(["ALL_PROXY", "all_proxy"] as const)(
+        "routes HTTP requests through the SOCKS5 proxy when %s=socks5://...",
+        async (name) => {
+          process.env[name] = socksUrl
+          const dispatcher = createProxyDispatcher()
+
+          const response = await fetch(`${originUrl}/test.json`, { dispatcher })
+          const body = (await response.json()) as { from: string }
+          expect(body.from).toBe("origin")
+          // SOCKS server saw a CONNECT to the origin host:port.
+          const originAddr = new URL(originUrl)
+          expect(socksHits).toEqual([
+            { host: originAddr.hostname, port: Number(originAddr.port) },
+          ])
+          // HTTP proxy was not involved.
+          expect(proxyHits).toHaveLength(0)
+        }
+      )
+
+      it("does not invoke SOCKS when ALL_PROXY scheme is http (falls through to direct)", async () => {
+        process.env.ALL_PROXY = `http://127.0.0.1:1`
+        const dispatcher = createProxyDispatcher()
+        expect(dispatcher).toBeUndefined()
+
+        const response = await fetch(`${originUrl}/test.json`)
+        const body = (await response.json()) as { from: string }
+        expect(body.from).toBe("origin")
+        expect(socksHits).toHaveLength(0)
+      })
+    })
+  }
+)
