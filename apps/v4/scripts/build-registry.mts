@@ -7,7 +7,7 @@ import path from "path"
 import { fileURLToPath } from "url"
 import { parseArgs } from "util"
 import prettier from "prettier"
-import { rimraf } from "rimraf"
+import { rm as fsRm } from "node:fs/promises";
 import { registrySchema, type RegistryItem } from "shadcn/schema"
 import {
   createStyleMap,
@@ -1086,7 +1086,7 @@ async function buildBases(bases: Base[], targetStyleNames?: Set<string>) {
 
       console.log(`   ✅ ${styleName}...`)
 
-      await rimraf(styleOutputDir)
+      await fsRm(styleOutputDir, { recursive: true, force: true })
       await fs.mkdir(styleOutputDir, { recursive: true })
 
       const styleRegistry = { ...baseRegistry, items: registryItems }
@@ -1389,7 +1389,7 @@ async function buildRegistryJsonFile(styleName: string) {
   }
 
   const outputDir = path.join(process.cwd(), `public/r/styles/${styleName}`)
-  await rimraf(outputDir)
+  await fsRm(outputDir, { recursive: true, force: true })
   await fs.mkdir(outputDir, { recursive: true })
 
   const registryJsonPath = path.join(outputDir, "registry.json")
@@ -1507,7 +1507,7 @@ async function cleanUpTemporaryFiles(styleNames: string[]) {
 
   for (const styleName of styleNames) {
     cleanupTasks.push(
-      rimraf(path.join(process.cwd(), `registry-${styleName}.json`))
+      fsRm(path.join(process.cwd(), `registry-${styleName}.json`), { recursive: true, force: true })
     )
 
     // Only generated combinations have a temporary registry/<style> tree.
@@ -1515,7 +1515,7 @@ async function cleanUpTemporaryFiles(styleNames: string[]) {
     // never be removed.
     if (getStyleCombination(styleName)) {
       console.log(`   🗑️ registry/${styleName}`)
-      cleanupTasks.push(rimraf(getTemporaryRegistryRoot(styleName)))
+      cleanupTasks.push(fsRm(getTemporaryRegistryRoot(styleName), { recursive: true, force: true }))
     }
   }
 
@@ -1602,7 +1602,7 @@ async function copyUIToStyles(targetStyleNames?: Set<string>) {
       })
 
       if (!shouldGenerateRtlStyles(styleName)) {
-        await rimraf(path.join(styleRoot, "ui-rtl"))
+        await fsRm(path.join(styleRoot, "ui-rtl"), { recursive: true, force: true })
       }
 
       console.log(`   ✅ registry/${styleName}/ui → styles/${styleName}/ui`)
@@ -1734,7 +1734,7 @@ async function syncDirectory({
   await Promise.all(
     targetEntries.map(async (entry) => {
       if (!sourceNames.has(entry.name)) {
-        await rimraf(path.join(toDir, entry.name))
+        await fsRm(path.join(toDir, entry.name), { recursive: true, force: true })
       }
     })
   )
@@ -1749,7 +1749,7 @@ async function syncDirectory({
 
       if (entry.isDirectory()) {
         if (existingTargetEntry && !existingTargetEntry.isDirectory()) {
-          await rimraf(targetPath)
+          await fsRm(targetPath, { recursive: true, force: true })
         }
 
         return await syncDirectory({
@@ -1760,7 +1760,7 @@ async function syncDirectory({
       }
 
       if (existingTargetEntry?.isDirectory()) {
-        await rimraf(targetPath)
+        await fsRm(targetPath, { recursive: true, force: true })
       }
 
       let content = await fs.readFile(sourcePath, "utf8")

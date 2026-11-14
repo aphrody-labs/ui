@@ -6,7 +6,6 @@ import {
   type Server as NetServer,
   type Socket,
 } from "net"
-import { fetch } from "undici"
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest"
 
 import { createProxyDispatcher } from "./proxy"
