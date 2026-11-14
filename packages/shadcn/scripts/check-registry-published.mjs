@@ -15,7 +15,7 @@ const { name, version } = JSON.parse(
 
 let published = ""
 try {
-  published = execFileSync("npm", ["view", `${name}@${version}`, "version"], {
+  published = execFileSync("bun", ["view", `${name}@${version}`, "version"], {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "ignore"],
   }).trim()

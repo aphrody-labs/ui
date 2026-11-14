@@ -1,6 +1,6 @@
 import path from "path"
 import fs from "fs-extra"
-import { rimraf } from "rimraf"
+import { rm as fsRm } from "node:fs/promises";
 
 export const TEMP_DIR = path.join(__dirname, "../../temp")
 
@@ -65,7 +65,7 @@ export default async function setup() {
 
   return async () => {
     try {
-      await rimraf(TEMP_DIR)
+      await fsRm(TEMP_DIR, { recursive: true, force: true })
     } catch (error) {
       console.error("Failed to clean up temp directory:", error)
     }

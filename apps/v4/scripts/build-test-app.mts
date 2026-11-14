@@ -39,7 +39,7 @@
 
 import { promises as fs } from "fs"
 import path from "path"
-import { rimraf } from "rimraf"
+import { rm as fsRm } from "node:fs/promises";
 import { registrySchema } from "shadcn/schema"
 import {
   createStyleMap,
@@ -119,8 +119,8 @@ try {
     console.log(`\n📋 Processing ${base.name}...`)
 
     // Clear existing generated content.
-    await rimraf(path.join(testAppDir, "components/ui"))
-    await rimraf(path.join(testAppDir, "hooks"))
+    await fsRm(path.join(testAppDir, "components/ui"), { recursive: true, force: true })
+    await fsRm(path.join(testAppDir, "hooks"), { recursive: true, force: true })
 
     // Clear example routes (directories in app/).
     const appDir = path.join(testAppDir, "app")
@@ -129,7 +129,7 @@ try {
       const itemPath = path.join(appDir, item)
       const stat = await fs.stat(itemPath)
       if (stat.isDirectory()) {
-        await rimraf(itemPath)
+        await fsRm(itemPath, { recursive: true, force: true })
       }
     }
 
