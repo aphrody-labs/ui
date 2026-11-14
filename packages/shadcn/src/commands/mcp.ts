@@ -4,6 +4,7 @@ import { createServer } from "@/src/mcp"
 import { handleError } from "@/src/utils/handle-error"
 import { serveStdio } from "@modelcontextprotocol/server/stdio"
 import { loadEnvFiles } from "@shadcn/registry/internal/env-loader"
+import { exec } from "@shadcn/registry/internal/exec"
 import { getConfig } from "@shadcn/registry/internal/get-config"
 import { getPackageManager } from "@shadcn/registry/internal/get-package-manager"
 import { highlighter } from "@shadcn/registry/internal/highlighter"
@@ -12,7 +13,6 @@ import { spinner } from "@shadcn/registry/internal/spinner"
 import { updateDependencies } from "@shadcn/registry/internal/updaters/update-dependencies"
 import { Command } from "commander"
 import deepmerge from "deepmerge"
-import { execa } from "execa"
 import fsExtra from "fs-extra"
 import prompts from "prompts"
 import z from "zod"
@@ -167,7 +167,7 @@ mcp
           const devFlag = packageManager === "npm" ? "--save-dev" : "-D"
 
           const installSpinner = spinner("Installing dependencies...").start()
-          await execa(
+          await exec(
             packageManager,
             [installCommand, devFlag, ...DEPENDENCIES],
             {
@@ -210,13 +210,9 @@ args = ["shadcn@${SHADCN_MCP_VERSION}", "mcp"]`)
         const devFlag = packageManager === "npm" ? "--save-dev" : "-D"
 
         const installSpinner = spinner("Installing dependencies...").start()
-        await execa(
-          packageManager,
-          [installCommand, devFlag, ...DEPENDENCIES],
-          {
-            cwd: options.cwd,
-          }
-        )
+        await exec(packageManager, [installCommand, devFlag, ...DEPENDENCIES], {
+          cwd: options.cwd,
+        })
         installSpinner.succeed("Installing dependencies.")
       }
 

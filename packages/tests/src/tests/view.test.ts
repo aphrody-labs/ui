@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest"
+import { afterAll, beforeAll, describe, expect, it } from "bun:test"
 
 import { createFixtureTestDirectory, npxShadcn } from "../utils/helpers"
 import { configureRegistries, createRegistryServer } from "../utils/registry"

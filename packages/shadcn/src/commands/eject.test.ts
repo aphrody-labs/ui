@@ -1,19 +1,19 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "fs/promises"
 import os from "os"
 import path from "path"
+import { exec } from "@shadcn/registry/internal/exec"
 import {
   formatMonorepoMessage,
   getMonorepoTargets,
   isMonorepoRoot,
 } from "@shadcn/registry/internal/get-monorepo-info"
 import { getPackageManager } from "@shadcn/registry/internal/get-package-manager"
-import { execa } from "execa"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { runEject, SHADCN_TAILWIND_IMPORT } from "./eject"
 
-vi.mock("execa", () => ({
-  execa: vi.fn(),
+vi.mock("@shadcn/registry/internal/exec", () => ({
+  exec: vi.fn(),
 }))
 
 vi.mock("@shadcn/registry/internal/get-package-manager", () => ({
@@ -155,7 +155,7 @@ describe("runEject", () => {
     expect(output).toContain(shadcnCss.trim())
     expect(output).toContain("@layer base")
     expect(output).toContain("@apply bg-background text-foreground;")
-    expect(execa).toHaveBeenCalledWith("pnpm", ["remove", "shadcn"], {
+    expect(exec).toHaveBeenCalledWith("pnpm", ["remove", "shadcn"], {
       cwd: tempDir,
     })
   })
@@ -180,7 +180,7 @@ describe("runEject", () => {
     )
 
     expect(output).toContain("/* ejected from shadcn@4.8.3 */")
-    expect(execa).toHaveBeenCalledWith("pnpm", ["remove", "shadcn"], {
+    expect(exec).toHaveBeenCalledWith("pnpm", ["remove", "shadcn"], {
       cwd: tempDir,
     })
   })
@@ -197,7 +197,7 @@ describe("runEject", () => {
       silent: true,
     })
 
-    expect(execa).not.toHaveBeenCalled()
+    expect(exec).not.toHaveBeenCalled()
   })
 
   it("removes shadcn from package.json for deno", async () => {
@@ -215,7 +215,7 @@ describe("runEject", () => {
     )
 
     expect(packageJson.dependencies?.shadcn).toBeUndefined()
-    expect(execa).not.toHaveBeenCalled()
+    expect(exec).not.toHaveBeenCalled()
   })
 
   it("exits when shadcn/tailwind.css is not imported", async () => {

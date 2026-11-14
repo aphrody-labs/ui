@@ -7,7 +7,7 @@ import {
   encodePreset,
   type PresetConfig,
 } from "@shadcn/registry/internal/preset/preset"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "bun:test"
 
 import { resolveProjectPreset } from "./resolve"
 

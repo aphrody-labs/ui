@@ -48,7 +48,7 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
-    "test": "vitest run",
+    "test": "bun test",
     "test:browser": "vitest run -c vitest.browser.config.ts"
   },
   "peerDependencies": {
@@ -64,16 +64,15 @@
     }
   },
   "devDependencies": {
+    "@happy-dom/global-registrator": "^21.0.4",
     "@types/react-dom": "19.2.2",
     "@vitest/browser": "^3.2.7",
-    "jsdom": "^28.1.0",
     "playwright": "^1.61.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2",
-    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^3.2.7"
   }
 }

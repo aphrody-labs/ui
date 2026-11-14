@@ -1,6 +1,6 @@
 import type { UIMessage } from "@tanstack/ai-client"
 import type { ClientTool } from "@tanstack/ai/client"
-import { describe, expect, expectTypeOf, it } from "vitest"
+import { describe, expect, expectTypeOf, it } from "bun:test"
 
 import { testChatContract } from "../test/chat-contract"
 import { createChat } from "./index"

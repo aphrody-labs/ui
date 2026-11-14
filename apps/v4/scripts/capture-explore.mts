@@ -1,6 +1,5 @@
 import { existsSync, mkdirSync } from "fs"
 import path from "path"
-import puppeteer from "puppeteer"
 import { decodePreset } from "shadcn/preset"
 
 import { EXPLORE_PRESETS } from "../lib/explore"
@@ -9,10 +8,11 @@ const PRESETS_PATH = path.join(process.cwd(), "public/presets")
 const force = process.argv.includes("--force")
 
 // ----------------------------------------------------------------------------
-// Capture explore preset screenshots.
+// Capture explore preset screenshots with Bun.WebView
+// (https://bun.com/docs/runtime/webview). Bun.WebView has no device scale
+// factor: captures are 1x, and the viewport is resized to the target element.
 // ----------------------------------------------------------------------------
 async function captureScreenshots() {
-  // Ensure output directory exists.
   if (!existsSync(PRESETS_PATH)) {
     mkdirSync(PRESETS_PATH, { recursive: true })
   }
@@ -26,88 +26,71 @@ async function captureScreenshots() {
       })
 
   if (presets.length === 0) {
-    console.log("✨ All screenshots exist, nothing to capture")
+    console.log("All screenshots exist, nothing to capture")
     return
   }
 
-  const browser = await puppeteer.launch({
-    defaultViewport: {
-      width: 1280,
-      height: 720,
-      deviceScaleFactor: 2,
-    },
-  })
+  await using view = new Bun.WebView({ width: 1280, height: 720 })
 
   for (const code of presets) {
     const decoded = decodePreset(code)
     if (!decoded) {
-      console.warn(`⚠ Skipping invalid preset code: ${code}`)
+      console.warn(`Skipping invalid preset code: ${code}`)
       continue
     }
 
     const pageUrl = `http://localhost:4000/preview/radix/preview?preset=${code}`
-
-    const page = await browser.newPage()
-    await page.goto(pageUrl, {
-      waitUntil: "networkidle2",
-    })
-
     console.log(`- Capturing ${code}...`)
 
     for (const theme of ["light", "dark"] as const) {
-      const screenshotPath = path.join(
-        PRESETS_PATH,
-        `${code}-${theme}.png`
-      )
+      const screenshotPath = path.join(PRESETS_PATH, `${code}-${theme}.png`)
 
       if (!force && existsSync(screenshotPath)) {
         continue
       }
 
-      // Set theme and reload page.
-      await page.evaluate((currentTheme) => {
-        localStorage.setItem("theme", currentTheme)
-      }, theme)
-
-      await page.reload({ waitUntil: "networkidle2" })
+      await view.resize(1280, 720)
+      await view.navigate(pageUrl)
+      await view.evaluate(
+        `localStorage.setItem("theme", ${JSON.stringify(theme)})`
+      )
+      await view.navigate(pageUrl)
 
       // Wait for animations to complete.
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await Bun.sleep(1000)
 
-      // Hide Tailwind indicator.
-      await page.evaluate(() => {
-        const indicator = document.querySelector("[data-tailwind-indicator]")
-        if (indicator) {
-          indicator.remove()
-        }
-      })
+      // Hide Tailwind indicator and measure the capture target.
+      const rect = (await view.evaluate(`(() => {
+        document.querySelector("[data-tailwind-indicator]")?.remove()
+        const el = document.querySelector('[data-slot="capture-target"]')
+        if (!el) return null
+        const r = el.getBoundingClientRect()
+        return { width: Math.ceil(r.width), height: Math.ceil(r.height) }
+      })()`)) as { width: number; height: number } | null
 
-      // Capture the target element.
-      const element = await page.$('[data-slot="capture-target"]')
-      if (element) {
-        await element.screenshot({
-          path: screenshotPath,
-        })
+      if (rect) {
+        await view.resize(
+          Math.min(Math.max(rect.width, 1), 16384),
+          Math.min(Math.max(rect.height, 1), 16384)
+        )
+        await view.scrollTo('[data-slot="capture-target"]')
       } else {
-        console.warn(`⚠ No [data-slot="capture-target"] found for ${code} (${theme}), capturing full page`)
-        await page.screenshot({
-          path: screenshotPath,
-        })
+        console.warn(
+          `No [data-slot="capture-target"] found for ${code} (${theme}), capturing full page`
+        )
       }
+
+      await Bun.write(screenshotPath, await view.screenshot())
     }
-
-    await page.close()
   }
-
-  await browser.close()
 }
 
 try {
-  console.log("🔍 Capturing explore preset screenshots...")
+  console.log("Capturing explore preset screenshots...")
 
   await captureScreenshots()
 
-  console.log("✅ Done!")
+  console.log("Done.")
 } catch (error) {
   console.error(error)
   process.exit(1)

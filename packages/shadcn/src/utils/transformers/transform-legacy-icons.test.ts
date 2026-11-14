@@ -1,7 +1,7 @@
 import { transformLegacyIcons } from "@/src/utils/transformers/transform-legacy-icons"
 import { type Config } from "@shadcn/registry/internal/get-config"
 import { transform } from "@shadcn/registry/internal/transformers/index"
-import { describe, expect, test, vi } from "vitest"
+import { describe, expect, test, vi } from "bun:test"
 
 const testConfig: Config = {
   style: "new-york",

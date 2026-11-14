@@ -1,7 +1,7 @@
 import * as fs from "fs/promises"
 import { tmpdir } from "os"
 import * as path from "path"
-import { afterEach, beforeEach, describe, expect, it, test, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, test, vi } from "bun:test"
 import { z } from "zod"
 
 import { Config } from "../get-config"

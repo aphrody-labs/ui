@@ -47,10 +47,10 @@
     "dev": "tsup --watch",
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "format:write": "bun fmt --no-script \"**/*.{ts,tsx,mdx}\"",
+    "format:check": "bun fmt --no-script --check \"**/*.{ts,tsx,mdx}\"",
     "clean": "rimraf dist",
-    "test": "vitest run"
+    "test": "bun test"
   },
   "peerDependencies": {
     "@tanstack/ai": ">=0.40.0 <0.41.0",
@@ -75,7 +75,6 @@
     "zod": "3.25.76",
     "rimraf": "^6.0.1",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
-    "vitest": "^3.2.7"
+    "typescript": "^5.9.2"
   }
 }

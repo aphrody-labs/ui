@@ -1,5 +1,5 @@
 import { REGISTRY_URL } from "@shadcn/registry/internal/registry/constants"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import {
   getPresetUrlOnly,

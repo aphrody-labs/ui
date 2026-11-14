@@ -1,5 +1,5 @@
 import type { Config } from "@shadcn/registry/internal/get-config"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { transformTailwindContent } from "./update-tailwind-content"
 

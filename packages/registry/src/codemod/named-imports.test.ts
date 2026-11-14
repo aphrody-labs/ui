@@ -1,5 +1,5 @@
 import { type types as t } from "@babel/core"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { addNamedImport } from "./named-imports"
 import { parseModule } from "./parse"

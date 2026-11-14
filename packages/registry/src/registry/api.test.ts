@@ -17,8 +17,6 @@ import {
   RegistryValidationError,
 } from "@/src/registry/errors"
 import { getFixturesDir, withTempDir, writeFiles } from "@/src/test-helpers"
-import { http, HttpResponse } from "msw"
-import { setupServer } from "msw/node"
 import {
   afterAll,
   afterEach,
@@ -27,7 +25,9 @@ import {
   expect,
   it,
   vi,
-} from "vitest"
+} from "bun:test"
+import { http, HttpResponse } from "msw"
+import { setupServer } from "msw/node"
 import { z } from "zod"
 
 import {

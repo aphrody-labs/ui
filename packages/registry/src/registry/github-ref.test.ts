@@ -1,6 +1,6 @@
-import { execa } from "execa"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 
+import { exec } from "../exec"
 import {
   getGitHubRefCandidates,
   getPreferredGitHubRefNames,
@@ -8,17 +8,17 @@ import {
   resolveGitHubRef,
 } from "./github-ref"
 
-vi.mock("execa", () => ({
-  execa: vi.fn(),
+vi.mock("../exec", () => ({
+  exec: vi.fn(),
 }))
 
 describe("GitHub ref resolution", () => {
   beforeEach(() => {
-    vi.mocked(execa).mockReset()
+    vi.mocked(exec).mockReset()
   })
 
   it("resolves HEAD through git ls-remote", async () => {
-    vi.mocked(execa).mockResolvedValueOnce({
+    vi.mocked(exec).mockResolvedValueOnce({
       stdout: [
         "ref: refs/heads/main\tHEAD",
         "1111111111111111111111111111111111111111\tHEAD",
@@ -28,7 +28,7 @@ describe("GitHub ref resolution", () => {
     await expect(resolveGitHubRef({ owner: "acme", repo: "ui" })).resolves.toBe(
       "1111111111111111111111111111111111111111"
     )
-    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+    expect(vi.mocked(exec)).toHaveBeenCalledWith(
       "git",
       ["ls-remote", "--symref", "--", "https://github.com/acme/ui.git", "HEAD"],
       {
@@ -48,7 +48,7 @@ describe("GitHub ref resolution", () => {
         ref: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
       })
     ).resolves.toBe("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-    expect(vi.mocked(execa)).not.toHaveBeenCalled()
+    expect(vi.mocked(exec)).not.toHaveBeenCalled()
   })
 
   it("prefers branch names before tag names for shorthand refs", () => {
@@ -61,7 +61,7 @@ describe("GitHub ref resolution", () => {
   })
 
   it("prefers peeled annotated tags over tag objects", async () => {
-    vi.mocked(execa).mockResolvedValueOnce({
+    vi.mocked(exec).mockResolvedValueOnce({
       stdout: [
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\trefs/tags/v1.0.0",
         "2222222222222222222222222222222222222222\trefs/tags/v1.0.0^{}",
@@ -74,14 +74,14 @@ describe("GitHub ref resolution", () => {
   })
 
   it("treats short SHAs as refs", async () => {
-    vi.mocked(execa).mockResolvedValueOnce({
+    vi.mocked(exec).mockResolvedValueOnce({
       stdout: "",
     } as any)
 
     await expect(
       resolveGitHubRef({ owner: "acme", repo: "ui", ref: "abc1234" })
     ).rejects.toThrow('Could not resolve GitHub ref "abc1234"')
-    expect(vi.mocked(execa)).toHaveBeenCalledWith(
+    expect(vi.mocked(exec)).toHaveBeenCalledWith(
       "git",
       [
         "ls-remote",
@@ -99,19 +99,19 @@ describe("GitHub ref resolution", () => {
 
   it("reuses command-local ref cache", async () => {
     const cache = new Map<string, Promise<string>>()
-    vi.mocked(execa).mockResolvedValueOnce({
+    vi.mocked(exec).mockResolvedValueOnce({
       stdout: "1111111111111111111111111111111111111111\tHEAD",
     } as any)
 
     await resolveGitHubRef({ owner: "acme", repo: "ui" }, { cache })
     await resolveGitHubRef({ owner: "acme", repo: "ui" }, { cache })
 
-    expect(vi.mocked(execa)).toHaveBeenCalledTimes(1)
+    expect(vi.mocked(exec)).toHaveBeenCalledTimes(1)
   })
 
   it("removes failed ref resolutions from the command-local cache", async () => {
     const cache = new Map<string, Promise<string>>()
-    vi.mocked(execa)
+    vi.mocked(exec)
       .mockRejectedValueOnce(
         Object.assign(new Error("timed out"), { timedOut: true })
       )
@@ -126,11 +126,11 @@ describe("GitHub ref resolution", () => {
       resolveGitHubRef({ owner: "acme", repo: "ui" }, { cache })
     ).resolves.toBe("1111111111111111111111111111111111111111")
 
-    expect(vi.mocked(execa)).toHaveBeenCalledTimes(2)
+    expect(vi.mocked(exec)).toHaveBeenCalledTimes(2)
   })
 
   it("returns a clear missing git suggestion", async () => {
-    vi.mocked(execa).mockRejectedValueOnce(
+    vi.mocked(exec).mockRejectedValueOnce(
       Object.assign(new Error("spawn git ENOENT"), { code: "ENOENT" })
     )
 
@@ -143,7 +143,7 @@ describe("GitHub ref resolution", () => {
   })
 
   it("returns a clear timeout suggestion", async () => {
-    vi.mocked(execa).mockRejectedValueOnce(
+    vi.mocked(exec).mockRejectedValueOnce(
       Object.assign(new Error("timed out"), { timedOut: true })
     )
 
@@ -158,7 +158,7 @@ describe("GitHub ref resolution", () => {
 
 describe("GitHub ls-remote parsing", () => {
   beforeEach(() => {
-    vi.mocked(execa).mockReset()
+    vi.mocked(exec).mockReset()
   })
 
   it("parses advertised refs and skips symref lines", () => {

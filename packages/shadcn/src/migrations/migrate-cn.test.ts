@@ -5,7 +5,7 @@ import {
   installDependencies,
   removeDependencies,
 } from "@shadcn/registry/internal/updaters/update-dependencies"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { createCnTransformer } from "./cn/transform"
 import { migrateCn, transformCnSource } from "./migrate-cn"

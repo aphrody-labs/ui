@@ -1,5 +1,5 @@
+import { afterEach, describe, expect, it, vi } from "bun:test"
 import { Agent, EnvHttpProxyAgent } from "undici"
-import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { createProxyDispatcher, fetchWithProxy } from "./proxy"
 

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import path from "node:path"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 // Typeset's append-stability contract: appending content must never restyle
 // content already on screen. Enforced statically — banned forward-looking

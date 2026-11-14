@@ -1,6 +1,6 @@
 import type { Config } from "@/src/get-config"
 import { getFixturesDir } from "@/src/test-helpers"
-import { describe, expect, it, test } from "vitest"
+import { describe, expect, it, test } from "bun:test"
 
 import { transform } from "."
 import stone from "../../test/fixtures/colors/stone.json"

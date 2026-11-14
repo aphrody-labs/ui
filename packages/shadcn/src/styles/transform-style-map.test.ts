@@ -1,5 +1,5 @@
+import { describe, expect, it } from "bun:test"
 import { Project, ScriptKind } from "ts-morph"
-import { describe, expect, it } from "vitest"
 
 import { type StyleMap } from "./create-style-map"
 import { transformStyleMap } from "./transform-style-map"

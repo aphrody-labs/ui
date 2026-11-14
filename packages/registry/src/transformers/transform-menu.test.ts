@@ -1,6 +1,6 @@
 import { type Config } from "@/src/get-config"
 import { transformMenu } from "@/src/transformers/transform-menu"
-import { describe, expect, test } from "vitest"
+import { describe, expect, test } from "bun:test"
 
 import { transform } from "."
 

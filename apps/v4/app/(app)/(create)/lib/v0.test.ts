@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { DEFAULT_CONFIG } from "@/registry/config"
 import { buildV0Payload } from "@/app/(app)/(create)/lib/v0"

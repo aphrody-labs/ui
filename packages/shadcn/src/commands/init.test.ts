@@ -12,7 +12,7 @@ import {
   getProjectInfo,
   getProjectTailwindVersionFromConfig,
 } from "@shadcn/registry/internal/get-project-info"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { applyInitUrlOptions, init, initOptionsSchema, runInit } from "./init"
 

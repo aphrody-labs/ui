@@ -1,8 +1,9 @@
 import path from "path"
 import { highlighter } from "@/src/highlighter"
 import { logger } from "@/src/logger"
-import fg from "fast-glob"
 import fs from "fs-extra"
+
+import { glob, globSync } from "./glob"
 
 const FRAMEWORK_CONFIG_FILES = [
   "next.config.*",
@@ -56,7 +57,7 @@ export async function getMonorepoTargets(cwd: string) {
     return []
   }
 
-  const dirs = await fg(patterns, {
+  const dirs = await glob(patterns, {
     cwd,
     onlyDirectories: true,
     ignore: ["**/node_modules/**"],
@@ -78,7 +79,7 @@ export async function getMonorepoTargets(cwd: string) {
     )
 
     const hasFrameworkConfig = FRAMEWORK_CONFIG_FILES.some((pattern) => {
-      const matches = fg.sync(pattern, {
+      const matches = globSync(pattern, {
         cwd: fullPath,
         dot: true,
       })

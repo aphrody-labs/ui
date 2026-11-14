@@ -12,7 +12,8 @@ import {
   GitHubTransportError,
   resolveGitHubRefViaAuth,
 } from "@/src/registry/github-cli"
-import { execa } from "execa"
+
+import { exec } from "../exec"
 
 const GITHUB_URL = "https://github.com"
 const GITHUB_SHA_PATTERN = /^[a-fA-F0-9]{40}$/
@@ -64,7 +65,7 @@ async function resolveGitHubRefUncached(
 
   let stdout: string
   try {
-    const result = await execa(
+    const result = await exec(
       "git",
       ["ls-remote", "--symref", "--", repoUrl, ...candidates],
       {

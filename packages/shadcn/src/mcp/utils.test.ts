@@ -3,7 +3,7 @@ import type {
   registryItemSchema,
   searchResultsSchema,
 } from "@shadcn/registry/schema"
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it, vi } from "bun:test"
 import { z } from "zod"
 
 import {

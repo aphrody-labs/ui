@@ -1,6 +1,7 @@
 import { promises as fs } from "fs"
 import path from "path"
 import { handleError } from "@/src/utils/handle-error"
+import { exec } from "@shadcn/registry/internal/exec"
 import { getConfig } from "@shadcn/registry/internal/get-config"
 import {
   formatMonorepoMessage,
@@ -14,7 +15,6 @@ import { logger } from "@shadcn/registry/internal/logger"
 import { SHADCN_URL } from "@shadcn/registry/internal/registry/constants"
 import { spinner } from "@shadcn/registry/internal/spinner"
 import { Command } from "commander"
-import { execa } from "execa"
 import fsExtra from "fs-extra"
 import prompts from "prompts"
 import { z } from "zod"
@@ -220,16 +220,16 @@ async function removeShadcnDependency(cwd: string) {
 
   switch (packageManager) {
     case "npm":
-      await execa("npm", ["uninstall", "shadcn"], { cwd })
+      await exec("npm", ["uninstall", "shadcn"], { cwd })
       break
     case "pnpm":
-      await execa("pnpm", ["remove", "shadcn"], { cwd })
+      await exec("pnpm", ["remove", "shadcn"], { cwd })
       break
     case "yarn":
-      await execa("yarn", ["remove", "shadcn"], { cwd })
+      await exec("yarn", ["remove", "shadcn"], { cwd })
       break
     case "bun":
-      await execa("bun", ["remove", "shadcn"], { cwd })
+      await exec("bun", ["remove", "shadcn"], { cwd })
       break
     case "deno": {
       const packageJsonPath = path.join(cwd, "package.json")

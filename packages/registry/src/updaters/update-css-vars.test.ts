@@ -1,5 +1,5 @@
 import type { Config } from "@/src/get-config"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import {
   isColorValue,

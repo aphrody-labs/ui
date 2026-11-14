@@ -1,8 +1,8 @@
 import { type Config } from "@shadcn/registry/internal/get-config"
 import { transform } from "@shadcn/registry/internal/transformers/index"
 import { transformIcons } from "@shadcn/registry/internal/transformers/transform-icons"
+import { describe, expect, it } from "bun:test"
 import { Project, ScriptKind, type SourceFile } from "ts-morph"
-import { describe, expect, it } from "vitest"
 
 import { fromTextTransformer, toTextTransformer } from "./source-file"
 

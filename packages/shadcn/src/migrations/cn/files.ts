@@ -1,6 +1,6 @@
 import { promises as fs } from "fs"
 import path from "path"
-import fg from "fast-glob"
+import { glob, globSync } from "@shadcn/registry/internal/glob"
 import { ScriptKind } from "ts-morph"
 
 import type { SourceRegion } from "./types"
@@ -56,7 +56,7 @@ export async function resolveMigrationFiles(cwd: string, migratePath?: string) {
 }
 
 function findSourceFiles(cwd: string, pattern = SOURCE_PATTERN) {
-  return fg(pattern, {
+  return glob(pattern, {
     cwd,
     absolute: true,
     onlyFiles: true,

@@ -8,11 +8,11 @@
     "build": "bun run registry:build && next build",
     "start": "next start --port 4000",
     "preview": "bun run registry:build && next build && next start --port 4000",
-    "lint": "eslint . --cache --cache-location .eslintcache",
-    "lint:fix": "eslint --fix . --cache --cache-location .eslintcache",
+    "lint": "bun lint --no-script .",
+    "lint:fix": "bun lint --no-script --fix .",
     "typecheck": "tsc --noEmit",
-    "format:write": "prettier --write \"**/*.{ts,tsx,mdx}\" --cache",
-    "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
+    "format:write": "bun fmt --no-script \"**/*.{ts,tsx,mdx}\"",
+    "format:check": "bun fmt --no-script --check \"**/*.{ts,tsx,mdx}\"",
     "icons:dev": "bun --tsconfig ./tsconfig.scripts.json ./scripts/build-icons.ts --watch",
     "icons:build": "bun --tsconfig ./tsconfig.scripts.json ./scripts/build-icons.ts",
     "registry:build": "bun run --filter @shadcn/react build && bun run --filter @shadcn/helpers build && bun run --filter shadcn... build && bun run ./scripts/build-registry.mts",
@@ -125,8 +125,7 @@
     "typescript-eslint": "^8.46.2",
     "undici": "^7.30.1",
     "unist-builder": "3.0.0",
-    "unist-util-visit": "^4.1.2",
-    "vitest": "^3.2.7"
+    "unist-util-visit": "^4.1.2"
   },
   "prettier": {
     "endOfLine": "lf",

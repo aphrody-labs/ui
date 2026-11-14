@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs"
 import os from "node:os"
 import path from "node:path"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { getDryRunEnvironment, runLocalCliDryRun } from "./dry-run"
 import { REGISTRY_DRY_RUN_FAILURE_MESSAGE_MAX_LENGTH } from "./schema"

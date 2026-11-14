@@ -1,7 +1,7 @@
 import path from "path"
 import { logger } from "@/src/logger"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 import fs from "fs-extra"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   formatMonorepoMessage,

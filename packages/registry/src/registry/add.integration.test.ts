@@ -3,7 +3,7 @@ import { createServer } from "http"
 import { tmpdir } from "os"
 import path from "path"
 import { createConfig } from "@/src/get-config"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it } from "bun:test"
 
 import { addRegistryItems } from "./add"
 import { getRegistriesConfig } from "./api"

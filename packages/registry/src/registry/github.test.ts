@@ -1,6 +1,3 @@
-import { execa } from "execa"
-import { http, HttpResponse } from "msw"
-import { setupServer } from "msw/node"
 import {
   afterAll,
   afterEach,
@@ -10,8 +7,11 @@ import {
   expect,
   it,
   vi,
-} from "vitest"
+} from "bun:test"
+import { http, HttpResponse } from "msw"
+import { setupServer } from "msw/node"
 
+import { exec } from "../exec"
 import { logger } from "../logger"
 import { withRegistryContext } from "./context"
 import { RegistrySourceFileError, RegistryValidationError } from "./errors"
@@ -24,8 +24,8 @@ import {
 } from "./resolver"
 import { searchRegistries } from "./search"
 
-vi.mock("execa", () => ({
-  execa: vi.fn(),
+vi.mock("../exec", () => ({
+  exec: vi.fn(),
 }))
 
 const server = setupServer()
@@ -47,7 +47,7 @@ describe("GitHub registry items", () => {
     vi.stubEnv("GH_TOKEN", "")
     vi.stubEnv("GITHUB_TOKEN", "")
     resetGitHubAuthNotices()
-    vi.mocked(execa).mockImplementation(((command: string) => {
+    vi.mocked(exec).mockImplementation(((command: string) => {
       if (command === "gh") {
         return Promise.reject(
           Object.assign(new Error("spawn gh ENOENT"), { code: "ENOENT" })
@@ -69,7 +69,7 @@ describe("GitHub registry items", () => {
 
   afterEach(() => {
     server.resetHandlers()
-    vi.mocked(execa).mockReset()
+    vi.mocked(exec).mockReset()
     vi.unstubAllEnvs()
   })
 
@@ -131,7 +131,7 @@ describe("GitHub registry items", () => {
         },
       ],
     })
-    expect(vi.mocked(execa)).toHaveBeenCalledTimes(1)
+    expect(vi.mocked(exec)).toHaveBeenCalledTimes(1)
   })
 
   it("fetches an item from an explicit GitHub ref", async () => {
@@ -198,7 +198,7 @@ describe("GitHub registry items", () => {
     )
 
     expect(item.name).toBe("button")
-    expect(vi.mocked(execa)).not.toHaveBeenCalled()
+    expect(vi.mocked(exec)).not.toHaveBeenCalled()
   })
 
   it("encodes GitHub refs with slashes", async () => {
@@ -229,7 +229,7 @@ describe("GitHub registry items", () => {
   })
 
   it("fails when a GitHub ref cannot be resolved", async () => {
-    vi.mocked(execa).mockResolvedValueOnce({ stdout: "" } as any)
+    vi.mocked(exec).mockResolvedValueOnce({ stdout: "" } as any)
 
     await expect(
       fetchRegistryItems(["acme/ui/button#missing"], {} as any)
@@ -503,7 +503,7 @@ describe("GitHub registry items", () => {
       "card.tsx",
       "login-form.tsx",
     ])
-    expect(vi.mocked(execa)).toHaveBeenCalledTimes(2)
+    expect(vi.mocked(exec)).toHaveBeenCalledTimes(2)
   })
 
   it("keeps same-name GitHub dependencies from different repositories distinct", async () => {
@@ -955,7 +955,7 @@ describe("GitHub registry items", () => {
       expect(rawAuthorization).toBeNull()
       expect(apiAuthorizations).toEqual(["Bearer ci-token", "Bearer ci-token"])
       expect(
-        vi.mocked(execa).mock.calls.filter(([command]) => command === "gh")
+        vi.mocked(exec).mock.calls.filter(([command]) => command === "gh")
       ).toHaveLength(0)
     })
 
@@ -980,13 +980,13 @@ describe("GitHub registry items", () => {
           "Check that GH_TOKEN or GITHUB_TOKEN is valid and has read access to the repository.",
       })
       expect(
-        vi.mocked(execa).mock.calls.filter(([command]) => command === "gh")
+        vi.mocked(exec).mock.calls.filter(([command]) => command === "gh")
       ).toHaveLength(0)
     })
 
     it("upgrades a root 404 through gh once across concurrent items", async () => {
       let ghRootCalls = 0
-      vi.mocked(execa).mockImplementation(((
+      vi.mocked(exec).mockImplementation(((
         command: string,
         args?: readonly string[]
       ) => {
@@ -1185,7 +1185,7 @@ describe("GitHub registry items", () => {
 
     it("falls back to authenticated ref resolution when git ls-remote fails", async () => {
       vi.stubEnv("GH_TOKEN", "ci-token")
-      vi.mocked(execa).mockImplementation((() =>
+      vi.mocked(exec).mockImplementation((() =>
         Promise.reject(
           Object.assign(new Error("exit 128"), { exitCode: 128 })
         )) as any)
@@ -1216,7 +1216,7 @@ describe("GitHub registry items", () => {
 
     it("preserves the original ref error when authenticated resolution 404s", async () => {
       vi.stubEnv("GH_TOKEN", "ci-token")
-      vi.mocked(execa).mockImplementation((() =>
+      vi.mocked(exec).mockImplementation((() =>
         Promise.reject(
           Object.assign(new Error("exit 128"), { exitCode: 128 })
         )) as any)

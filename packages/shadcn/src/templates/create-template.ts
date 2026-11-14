@@ -1,11 +1,11 @@
 import os from "os"
 import path from "path"
 import { handleError } from "@/src/utils/handle-error"
+import { exec } from "@shadcn/registry/internal/exec"
 import type { Config } from "@shadcn/registry/internal/get-config"
 import { parsePnpmWorkspacePackages } from "@shadcn/registry/internal/get-monorepo-info"
 import type { RegistryItem } from "@shadcn/registry/internal/registry/schema"
 import { spinner } from "@shadcn/registry/internal/spinner"
-import { execa } from "execa"
 import fs from "fs-extra"
 
 const GITHUB_REPO_URL =
@@ -176,7 +176,7 @@ export async function adaptWorkspaceConfig(
 // Get the package manager name and version string (e.g. "bun@1.2.0").
 async function getPackageManagerVersion(packageManager: string) {
   try {
-    const { stdout } = await execa(packageManager, ["--version"])
+    const { stdout } = await exec(packageManager, ["--version"])
     return `${packageManager}@${stdout.trim()}`
   } catch {
     return `${packageManager}@*`
@@ -246,7 +246,7 @@ function defaultScaffold({
           os.tmpdir(),
           `shadcn-template-${Date.now()}`
         )
-        await execa("git", [
+        await exec("git", [
           "clone",
           "--depth",
           "1",
@@ -255,7 +255,7 @@ function defaultScaffold({
           GITHUB_REPO_URL,
           templatePath,
         ])
-        await execa("git", [
+        await exec("git", [
           "-C",
           templatePath,
           "sparse-checkout",
@@ -278,7 +278,7 @@ function defaultScaffold({
       // Run install.
       const installArgs = getInstallArgs(packageManager)
       const args = ["install", ...installArgs]
-      await execa(packageManager, args, {
+      await exec(packageManager, args, {
         cwd: projectPath,
       })
 
@@ -308,9 +308,9 @@ function defaultScaffold({
 // Silently ignores failures (e.g. git not installed).
 async function defaultPostInit({ projectPath }: { projectPath: string }) {
   try {
-    await execa("git", ["init"], { cwd: projectPath })
-    await execa("git", ["add", "-A"], { cwd: projectPath })
-    await execa("git", ["commit", "-m", "feat: initial commit"], {
+    await exec("git", ["init"], { cwd: projectPath })
+    await exec("git", ["add", "-A"], { cwd: projectPath })
+    await exec("git", ["commit", "-m", "feat: initial commit"], {
       cwd: projectPath,
     })
   } catch {}

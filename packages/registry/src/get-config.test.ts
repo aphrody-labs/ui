@@ -2,8 +2,8 @@ import os from "os"
 import path from "path"
 import { getProjectConfig } from "@/src/get-project-info"
 import { getFixturesDir, writeFiles } from "@/src/test-helpers"
+import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test"
 import fs from "fs-extra"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   createConfig,

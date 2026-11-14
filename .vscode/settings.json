@@ -4,11 +4,6 @@
     { "pattern": "packages/*/" }
   ],
   "tailwindCSS.classFunctions": ["cva", "cn"],
-  "vitest.debugExclude": [
-    "<node_internals>/**",
-    "**/node_modules/**",
-    "**/fixtures/**"
-  ],
   "files.exclude": {
     "deprecated": true
   },

@@ -1,6 +1,6 @@
 import { existsSync, promises as fs } from "fs"
 import type { Config } from "@/src/get-config"
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test"
 
 import { updateEnvVars } from "./update-env-vars"
 

@@ -1,8 +1,8 @@
 import path from "path"
 import { resolvePackageImport } from "@/src/package-imports"
 import { getFixturesDir } from "@/src/test-helpers"
+import { describe, expect, it } from "bun:test"
 import { loadConfig, type ConfigLoaderSuccessResult } from "tsconfig-paths"
-import { describe, expect, it } from "vitest"
 
 import {
   isLocalAliasImport,

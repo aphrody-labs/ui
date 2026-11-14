@@ -1,7 +1,7 @@
 import { FRAMEWORKS } from "@/src/frameworks"
 import { type Config } from "@/src/get-config"
 import { transformNext } from "@/src/transformers/transform-next"
-import { describe, expect, test, vi } from "vitest"
+import { describe, expect, test, vi } from "bun:test"
 
 import { transform } from "../transformers"
 

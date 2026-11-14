@@ -4,7 +4,7 @@ import * as path from "path"
 import { logger } from "@shadcn/registry/internal/logger"
 import { validateGitHubRegistrySource } from "@shadcn/registry/internal/registry/github"
 import { spinner } from "@shadcn/registry/internal/spinner"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { beforeEach, describe, expect, it, vi } from "bun:test"
 
 import { validate } from "./validate"
 
@@ -52,7 +52,7 @@ vi.mock("@shadcn/registry/internal/registry/github", () => ({
 describe("registry validate command", () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    process.exitCode = undefined
+    process.exitCode = 0
   })
 
   it("prints success with checked counts", async () => {
@@ -77,7 +77,7 @@ describe("registry validate command", () => {
     expect(
       vi.mocked(logger.log).mock.calls.map(([message]) => message)
     ).toEqual(["  - registry.json"])
-    expect(process.exitCode).toBeUndefined()
+    expect(process.exitCode ?? 0).toBe(0)
   })
 
   it("prints grouped diagnostics and sets a failing exit code", async () => {
@@ -149,7 +149,7 @@ describe("registry validate command", () => {
     expect(spinner).toHaveBeenCalledWith("Checked 1 registry file and 2 items.")
     expect(summarySpinner.succeed).toHaveBeenCalled()
     expect(logger.log).toHaveBeenCalledWith("  - registry.json")
-    expect(process.exitCode).toBeUndefined()
+    expect(process.exitCode ?? 0).toBe(0)
   })
 
   it("does not treat an existing local path as a GitHub source registry", async () => {

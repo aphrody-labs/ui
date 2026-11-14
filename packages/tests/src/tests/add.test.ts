@@ -1,6 +1,6 @@
 import path from "path"
+import { describe, expect, it } from "bun:test"
 import fs from "fs-extra"
-import { describe, expect, it } from "vitest"
 
 import {
   createFixtureTestDirectory,

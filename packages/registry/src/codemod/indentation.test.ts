@@ -1,5 +1,5 @@
 import { type types as t } from "@babel/core"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it } from "bun:test"
 
 import { applyEdits, replaceWithText } from "./edits"
 import { getIndentationLevel, getReplacementText } from "./indentation"

@@ -1,7 +1,7 @@
 import os from "os"
 import path from "path"
+import { afterEach, describe, expect, it, vi } from "bun:test"
 import fs from "fs-extra"
-import { afterEach, describe, expect, it, vi } from "vitest"
 
 import {
   FILE_BACKUP_SUFFIX,
