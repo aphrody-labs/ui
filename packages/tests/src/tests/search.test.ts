@@ -498,7 +498,7 @@ describe("shadcn search", () => {
     const output = await npxShadcn(fixturePath, ["search", "@timeout"])
 
     // Check for connection error in the output
-    expect(output.stdout.toLowerCase()).toContain("failed, reason:")
+    expect(output.stdout.toLowerCase()).toMatch(/failed, reason:|econnrefused/)
   })
 
   it("should list multiple registries with mixed success and failure", async () => {

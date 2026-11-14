@@ -23,7 +23,10 @@ describe("calendar registry items", () => {
     ...findFiles(resolve(appDir, "registry/bases"), "calendar.tsx"),
     ...findFiles(resolve(appDir, "registry/new-york-v4"), "calendar.tsx"),
     ...findFiles(resolve(appDir, "styles"), "calendar.tsx"),
-  ]
+    // The aria base (and aria-* generated styles) is built on
+    // react-aria-components, not react-day-picker.
+  ].filter((file) => !/[\\/]aria(-[a-z]+)?[\\/]/.test(file))
+
   // Only the frozen legacy styles are checked here: they have no .tsx source
   // and are maintained by editing the published JSON directly in git. All
   // other styles are generated from the sources checked above.

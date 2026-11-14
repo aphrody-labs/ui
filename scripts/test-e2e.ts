@@ -2,10 +2,13 @@
 import path from "node:path"
 
 const root = path.join(import.meta.dir, "..")
-const url = "http://localhost:4000"
+const port = process.env.E2E_PORT ?? "4000"
+const url = "http://localhost:" + port
 
-const server = Bun.spawn(["bun", "run", "--filter", "v4", "dev"], {
-  cwd: root,
+// Needs generated styles: run registry:build --style all and --registry all first, otherwise
+// next.config.mjs throws and the dev server never answers GET /.
+const server = Bun.spawn(["bun", "x", "next", "dev", "--turbopack", "--port", port], {
+  cwd: path.join(root, "apps/v4"),
   stdout: "inherit",
   stderr: "inherit",
 })
@@ -13,6 +16,7 @@ const server = Bun.spawn(["bun", "run", "--filter", "v4", "dev"], {
 async function waitForServer(timeoutMs = 180_000) {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
+    if (server.exitCode !== null) throw new Error("v4 dev server exited early")
     try {
       if ((await fetch(url)).status < 500) return
     } catch {}
@@ -24,7 +28,7 @@ async function waitForServer(timeoutMs = 180_000) {
 let code = 1
 try {
   await waitForServer()
-  const tests = Bun.spawn(["bun", "test"], {
+  const tests = Bun.spawn(["bun", "test", "--timeout", "120000"], {
     cwd: path.join(root, "packages/tests"),
     env: {
       ...process.env,

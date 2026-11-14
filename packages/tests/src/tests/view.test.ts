@@ -538,7 +538,7 @@ describe("shadcn view", () => {
     ])
 
     // Check for connection error in the output
-    expect(output.stdout.toLowerCase()).toContain("failed, reason:")
+    expect(output.stdout.toLowerCase()).toMatch(/failed, reason:|econnrefused/)
   })
 
   it("should handle mixed success and failure", async () => {

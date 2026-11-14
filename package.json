@@ -46,7 +46,7 @@
     "pub:beta": "cd packages/shadcn && bun run pub:beta",
     "pub:rc": "cd packages/shadcn && bun run pub:rc",
     "pub:release": "cd packages/shadcn && bun run pub:release",
-    "test": "bun run --filter v4 registry:build && bun scripts/test-e2e.ts",
+    "test": "bun run --filter v4 registry:build --style all && bun run --filter v4 registry:build --registry all && bun scripts/test-e2e.ts",
     "validate:registries": "bun run --filter v4 validate:registries",
     "test:apps": "bun run --filter v4 test:apps"
   },
